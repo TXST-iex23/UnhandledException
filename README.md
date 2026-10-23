@@ -1,7 +1,7 @@
 # Group: UnhandledException
 Group project for CS 3354.R04 at Texas State University
 
-![The project assignment](./supporting files/Assignment.png)
+![The project assignment](./supportFiles/Assignment.png)
 
 ## Purpose
 The purpose of the application is to simulate the type of software used at car rental companies. The software
