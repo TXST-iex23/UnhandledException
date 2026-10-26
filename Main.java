@@ -13,5 +13,16 @@ public class Main{
         System.out.println(nextDate.getDate());
         System.out.println(nextDate.getDateString());
 
+        // Testing Car Class
+        Car car1 = new Car("2003","Chevy","Cavalier" );
+        Car car2 = new Car(2003,"Chevy","Cavalier" );
+
+        print("");
+        print(car1.getMaker());
+        print(car2.getYear());
+        print(car1.getModel());
+        print("Mileage: " + String.valueOf(car2.getMileage()));
     }
+
+    public void print(String someString) { System.out.println(someString); }
 }
