@@ -33,7 +33,7 @@ public class Main{
         print(guy1.getName());
         guy1.setName("Michael","Jackson");
         print(guy1.getName());
-        // print(gal1.getName() + "  --  " + gal1.getDOB());
+        print(gal1.getName() + "  --  " + gal1.getDOB());
     }
 
     public void print(String someString) { System.out.println(someString); }

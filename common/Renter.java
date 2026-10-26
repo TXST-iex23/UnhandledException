@@ -45,7 +45,7 @@ public class Renter{
 
     // getters ----------------------------------------------------------------
     public String getName(){ return lName + ", " + fName; }
-    public Date getDOB(){ return doB; }
+    public Date getDOB(){ return dob; }
     public String getLicense() {return dLicense; }
     public getPayment () { return CreditCard; }
     public void getInsurance(String provider, String acct) {

@@ -37,4 +37,7 @@ public class Date{
         return "" + MONTHS[month] +" "+ day + ", " + year;
     }
 
+    public String toString() {
+        return getDateString ();
+    }
 }
