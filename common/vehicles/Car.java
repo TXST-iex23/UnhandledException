@@ -1,4 +1,4 @@
-package vehicles;
+package common.vehicles;
 
 public class Car extends Vehicle{
     public Car(String yr, String mkr, String mdl){

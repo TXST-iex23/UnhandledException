@@ -1,4 +1,4 @@
-package vehicles; // may Need to change when if class moves
+package common; // may Need to change when if class moves
 
 public class Date{
     private final String[] MONTHS = {"","January", "February", "March",

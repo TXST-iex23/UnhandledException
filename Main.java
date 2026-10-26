@@ -1,5 +1,6 @@
 // Currently here just to test subclassess
-import vehicles.*;
+import common.Date;
+import common.vehicles.*;
 
 public class Main{
     public void main(String args[]){
