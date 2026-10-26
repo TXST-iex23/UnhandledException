@@ -15,8 +15,8 @@ public class Main{
         System.out.println(nextDate.getDateString());
 
         // Testing Car Class
-        Car car1 = new Car("2003","Chevy","Cavalier" );
-        Car car2 = new Car(2003,"Chevy","Cavalier" );
+        Vehicle car1 = new Car("2003","Chevy","Cavalier" );
+        Vehicle car2 = new Car(2003,"Chevy","Cavalier" );
 
         print("");
         print(car1.getMaker());
@@ -34,6 +34,17 @@ public class Main{
         guy1.setName("Michael","Jackson");
         print(guy1.getName());
         print(gal1.getName() + "  --  " + gal1.getDOB());
+
+        // Testing Add/Remove from Inventory Class
+        print("");
+        Inventory store1 = new Inventory("My backyard");
+        store1.addVehicle(car1,"C0001");
+        store1.addVehicle(car2,"C0002");
+        print(car1.getHistory());
+        print(car2.getHistory());
+        store1.removeVehicle("C0001");
+        print(car1.getHistory());
+
     }
 
     public void print(String someString) { System.out.println(someString); }

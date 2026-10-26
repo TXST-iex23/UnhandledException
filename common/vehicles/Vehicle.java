@@ -44,35 +44,21 @@ public abstract class Vehicle{
 
     // getters -----------------------------------------------------------------
     public String getID(){ return assetNo; }
-
     public String getYear(){ return year; }
-
     public String getMaker(){ return maker; }
-
     public String getModel(){ return model; }
-
     public String getType(){ return vehicleType; }
-
     public int getMileage(){ return mileage; }
-
     public String getHistory(){ return history.get(history.size() - 1); }
-
     public String getAllHistory(){ return "TBD"; }
 
     // setters -----------------------------------------------------------------
-    public void setID(){ //.add code;
-        }
-
+    public void setID(String id){ assetNo = id; }
     public void setYear(String yr){ year = yr; }
-
     public void setMaker(String mkr){ maker = mkr; }
-
     public void setModel(String mdl){ model = mdl; }
-
     public void setType(String vType){ vehicleType = vType; }
-
     public void setMileage(int miles){ mileage = miles; }
-
     public void record(String input){ history.add(input); }
 
 }
