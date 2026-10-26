@@ -9,10 +9,12 @@ public class Main{
         Date defaultDate = new Date();
         System.out.println(defaultDate.getDate());
         System.out.println(defaultDate.getDateString());
+        System.out.println(defaultDate.getDateCode());
 
         Date nextDate = new Date(2026,12,25);
         System.out.println(nextDate.getDate());
         System.out.println(nextDate.getDateString());
+        System.out.println(nextDate.getDateCode());
 
         // Testing Car Class
         Vehicle car1 = new Car("2003","Chevy","Cavalier" );
@@ -44,6 +46,11 @@ public class Main{
         print(car2.getHistory());
         store1.removeVehicle("C0001");
         print(car1.getHistory());
+        Date dayIn = new Date(2020,3,20);
+        Date dayOut = new Date(2020,3,15);
+        print("Day count: " + store1.cntDays(dayOut, dayIn ));
+
+
 
     }
 

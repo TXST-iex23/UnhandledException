@@ -36,4 +36,8 @@ public class Inventory{
             lotStock.remove(index);
         }
     }
+
+    public int cntDays(Date checkout, Date checkin){
+        return checkin.getDateCode() - checkout.getDateCode();
+    }
 }
