@@ -1,58 +1,28 @@
-// Currently here just to test subclassess
-import common.*;
-import common.vehicles.*;
+import common.Inventory;
+import common.vehicles.Car;
+import common.vehicles.Motorcycle;
+import console.ConsoleUI;
 
+/**
+ * Starts the vehicle rental program and prepares its sample inventory.
+ * The console interface is created here, while rental rules remain in the
+ * application classes such as {@code Inventory} and {@code Rental}.
+ */
 public class Main{
+    /**
+     * Builds the starting inventory and launches the console menu.
+     *
+     * @param args command-line arguments; this program does not use them
+     */
     public static void main(String[] args){
+        // The vehicles are stored as a group by Inventory and can be handled
+        // through their shared Vehicle superclass in the rest of the program.
+        Inventory inventory = new Inventory("Main Office");
+        inventory.addVehicle(new Car(2022, "Toyota", "Camry"), "C0001");
+        inventory.addVehicle(new Car(2023, "Honda", "Civic"), "C0002");
+        inventory.addVehicle(new Motorcycle(2024, "Honda", "Rebel"), "M0001");
 
-        // Testing Date Class
-        Date defaultDate = new Date();
-        System.out.println(defaultDate.getDate());
-        System.out.println(defaultDate.getDateString());
-        System.out.println(defaultDate.getDateCode());
-
-        Date nextDate = new Date(2026,12,25);
-        System.out.println(nextDate.getDate());
-        System.out.println(nextDate.getDateString());
-        System.out.println(nextDate.getDateCode());
-
-        // Testing Car Class
-        Vehicle car1 = new Car("2003","Chevy","Cavalier" );
-        Vehicle car2 = new Car(2003,"Chevy","Cavalier" );
-
-        print("");
-        print(car1.getMaker());
-        print(car2.getYear());
-        print(car1.getModel());
-        print("Mileage: " + String.valueOf(car2.getMileage()));
-
-        // Testing Renter Class
-        print("");
-        Renter guy1 = new Renter();
-        Renter gal1 = new Renter("Billy", "Jean");
-        gal1.setDOB(new Date(1980,2,14));
-
-        print(guy1.getName());
-        guy1.setName("Michael","Jackson");
-        print(guy1.getName());
-        print(gal1.getName() + "  --  " + gal1.getDOB());
-
-        // Testing Add/Remove from Inventory Class
-        print("");
-        Inventory store1 = new Inventory("My backyard");
-        store1.addVehicle(car1,"C0001");
-        store1.addVehicle(car2,"C0002");
-        print(car1.getHistory());
-        print(car2.getHistory());
-        store1.removeVehicle("C0001");
-        print(car1.getHistory());
-        Date dayIn = new Date(2020,3,20);
-        Date dayOut = new Date(2020,3,15);
-        print("Day count: " + store1.cntDays(dayOut, dayIn ));
-
-
-
+        ConsoleUI console = new ConsoleUI(inventory);
+        console.run();
     }
-
-    public static void print(String someString) { System.out.println(someString); }
 }
