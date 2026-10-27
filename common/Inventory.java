@@ -15,16 +15,23 @@ public class Inventory{
         private int getIndexByID(String identifier){
         int cnt = lotStock.size();
         for(int i = 0; i < cnt; i++){
-            if(lotStock.get(i).getID().equals(identifier)){ return i; }
+            if(identifier != null && identifier.equals(lotStock.get(i).getID())){ return i; }
         }
         return -1;
     }
 
     // PUBLIC **************************************************************
     public void addVehicle(Vehicle asset, String identifier){
+        if(asset == null || identifier == null || getIndexByID(identifier) >= 0){ return; }
         asset.setID(identifier);
         asset.record(identifier + " was added to the inventory.");
         lotStock.add(asset);
+    }
+
+    public Vehicle findVehicle(String identifier){
+        int index = getIndexByID(identifier);
+        if(index < 0){ return null; }
+        return lotStock.get(index);
     }
 
     public void removeVehicle(String identifier){
