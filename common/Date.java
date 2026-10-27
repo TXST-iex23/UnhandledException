@@ -25,14 +25,25 @@ public class Date{
     }
 
     // METHODS  =================================================================
-    private void setDateCode(int annual, int lunar, int daily){
+    private int calculateDateCode(int annual, int lunar, int daily){
         final int STARTYEAR = 1900;
-        int totaldays = -1;
-        totaldays += (annual - STARTYEAR)*365;
-        totaldays += perYear(lunar, daily);
-        totaldays += (annual-1-STARTYEAR)/4;
-        if(lunar > 2 || (lunar == 2 && daily == 29)) totaldays += 1;
-        dateCode = totaldays;
+        long daysBeforeThisYear = (long)(annual - STARTYEAR) * 365;
+        daysBeforeThisYear += leapYearsBefore(annual) - leapYearsBefore(STARTYEAR);
+        long code = daysBeforeThisYear + perYear(lunar, daily) - 1;
+        if(lunar > 2 && isLeapYear(annual)){ code++; }
+        if(code < Integer.MIN_VALUE || code > Integer.MAX_VALUE){
+            throw new IllegalArgumentException("Date is outside the supported range.");
+        }
+        return (int)code;
+    }
+
+    private int leapYearsBefore(int annual){
+        int year = annual - 1;
+        return year / 4 - year / 100 + year / 400;
+    }
+
+    private boolean isLeapYear(int annual){
+        return annual % 4 == 0 && (annual % 100 != 0 || annual % 400 == 0);
     }
     private int perYear(int lunar, int daily){
         int days = 0;
@@ -45,11 +56,19 @@ public class Date{
 
     // public -------------------------------------------------------------------
     public void setDate(int annual, int lunar, int daily){
-        // can poterntially add date validation program later
+        if(annual < 1 || lunar < 1 || lunar > 12){
+            throw new IllegalArgumentException("Date has an invalid year or month.");
+        }
+        int maxDay = DAYSOFMONTHS[lunar];
+        if(lunar == 2 && isLeapYear(annual)){ maxDay++; }
+        if(daily < 1 || daily > maxDay){
+            throw new IllegalArgumentException("Date has an invalid day.");
+        }
+        int newDateCode = calculateDateCode(annual, lunar, daily);
         year = annual;
         month = lunar;
         day = daily;
-        setDateCode(annual, lunar, daily);
+        dateCode = newDateCode;
     }
 
     public String getDate() { return "" + month + "/" + day + "/" + year; }

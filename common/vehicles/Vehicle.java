@@ -49,8 +49,19 @@ public abstract class Vehicle{
     public String getModel(){ return model; }
     public String getType(){ return vehicleType; }
     public int getMileage(){ return mileage; }
-    public String getHistory(){ return history.get(history.size() - 1); }
-    public String getAllHistory(){ return "TBD"; }
+    public String getHistory(){
+        if(history.isEmpty()){ return "No history available."; }
+        return history.get(history.size() - 1);
+    }
+    public String getAllHistory(){
+        if(history.isEmpty()){ return "No history available."; }
+        StringBuilder allHistory = new StringBuilder();
+        for(String entry : history){
+            if(allHistory.length() > 0){ allHistory.append(System.lineSeparator()); }
+            allHistory.append(entry);
+        }
+        return allHistory.toString();
+    }
 
     // setters -----------------------------------------------------------------
     public void setID(String id){ assetNo = id; }

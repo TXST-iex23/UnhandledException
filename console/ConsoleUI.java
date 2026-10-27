@@ -20,7 +20,7 @@ public class ConsoleUI{
     public void run(){
         boolean running = true;
         while(running){
-            System.out.println("\nVehicle Rental System");
+            System.out.println("\n\nVehicle Rental System\n");
             System.out.println("1. View available vehicles");
             System.out.println("2. Rent a vehicle");
             System.out.println("3. Return a vehicle");
@@ -82,16 +82,12 @@ public class ConsoleUI{
             return;
         }
 
-        String firstName = readLine("Enter renter first name: ");
+        String firstName = readRequiredText("Enter renter first name: ");
         if(firstName == null){ return; }
-        String lastName = readLine("Enter renter last name: ");
+        String lastName = readRequiredText("Enter renter last name: ");
         if(lastName == null){ return; }
-        Integer duration = readInteger("Enter rental duration in days: ");
+        Integer duration = readPositiveInteger("Enter rental duration in days: ");
         if(duration == null){ return; }
-        if(duration <= 0){
-            System.out.println("Rental duration must be greater than zero.");
-            return;
-        }
 
         Renter renter = new Renter(firstName.trim(), lastName.trim());
         Rental rental = inventory.rentVehicle(vehicle, renter, duration);
@@ -141,6 +137,24 @@ public class ConsoleUI{
             } catch(NumberFormatException exception){
                 System.out.println("Please enter a whole number.");
             }
+        }
+    }
+
+    private Integer readPositiveInteger(String prompt){
+        while(true){
+            Integer value = readInteger(prompt);
+            if(value == null){ return null; }
+            if(value > 0){ return value; }
+            System.out.println("Rental duration must be greater than zero.");
+        }
+    }
+
+    private String readRequiredText(String prompt){
+        while(true){
+            String value = readLine(prompt);
+            if(value == null){ return null; }
+            if(!value.trim().isEmpty()){ return value.trim(); }
+            System.out.println("This value cannot be blank.");
         }
     }
 

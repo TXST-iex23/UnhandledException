@@ -21,8 +21,7 @@ public class Renter{
     }
 
     public Renter(String first, String last) {
-        fName = first;
-        lName = last;
+        setName(first, last);
         dLicense = "Not Provided";
         InsuranceProvider = "Not Provided";
         InsuranceAcct = "Not Provided";
@@ -32,16 +31,30 @@ public class Renter{
     // METHODS  ```````````````````````````````````````````````````````````````
     // setters ----------------------------------------------------------------
     public void setName(String first, String last){
-        fName = first;
-        lName = last;
+        String validFirstName = requireText(first, "First name");
+        String validLastName = requireText(last, "Last name");
+        fName = validFirstName;
+        lName = validLastName;
     }
     public void setInsurance (String provider, String acct) {
-        InsuranceProvider = provider;
-        InsuranceAcct = acct;
+        String validProvider = requireText(provider, "Insurance provider");
+        String validAccount = requireText(acct, "Insurance account");
+        InsuranceProvider = validProvider;
+        InsuranceAcct = validAccount;
     }
-    public void setDOB(Date dateOfBirth){ dob = dateOfBirth; }
-    public void setLicense (String licenseNo) { dLicense = licenseNo; }
-    public void setPayment (String cCard) { CreditCard = cCard; }
+    public void setDOB(Date dateOfBirth){
+        if(dateOfBirth == null){ throw new IllegalArgumentException("Date of birth is required."); }
+        dob = dateOfBirth;
+    }
+    public void setLicense (String licenseNo) { dLicense = requireText(licenseNo, "License number"); }
+    public void setPayment (String cCard) { CreditCard = requireText(cCard, "Payment information"); }
+
+    private String requireText(String value, String fieldName){
+        if(value == null || value.trim().isEmpty()){
+            throw new IllegalArgumentException(fieldName + " cannot be blank.");
+        }
+        return value.trim();
+    }
 
     // getters ----------------------------------------------------------------
     public String getName(){ return lName + ", " + fName; }

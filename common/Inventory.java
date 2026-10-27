@@ -14,19 +14,31 @@ public class Inventory{
     // METHODS  -------------------------------------------------------------
     // PRIVATE **************************************************************
         private int getIndexByID(String identifier){
+        if(identifier == null){ return -1; }
+        String searchID = identifier.trim();
+        if(searchID.isEmpty()){ return -1; }
         int cnt = lotStock.size();
         for(int i = 0; i < cnt; i++){
-            if(identifier != null && identifier.equals(lotStock.get(i).getID())){ return i; }
+            if(searchID.equals(lotStock.get(i).getID())){ return i; }
         }
         return -1;
     }
 
     // PUBLIC **************************************************************
     public void addVehicle(Vehicle asset, String identifier){
-        if(asset == null || identifier == null || getIndexByID(identifier) >= 0){ return; }
-        asset.setID(identifier);
-        asset.record(identifier + " was added to the inventory.");
+        if(asset == null || identifier == null || identifier.trim().isEmpty()){ return; }
+        String vehicleID = identifier.trim();
+        if(getIndexByID(vehicleID) >= 0 || findVehicleByObject(asset)){ return; }
+        asset.setID(vehicleID);
+        asset.record(vehicleID + " was added to the inventory.");
         lotStock.add(asset);
+    }
+
+    private boolean findVehicleByObject(Vehicle asset){
+        for(Vehicle vehicle : lotStock){
+            if(vehicle == asset){ return true; }
+        }
+        return false;
     }
 
     public Vehicle findVehicle(String identifier){
@@ -63,7 +75,9 @@ public class Inventory{
 
     public Rental rentVehicle(Vehicle asset, Renter renter, int duration){
         if(asset == null || renter == null || duration <= 0){ return null; }
-        if(findVehicle(asset.getID()) != asset || !isAvailable(asset.getID())){ return null; }
+        String identifier = asset.getID();
+        if(identifier == null || findVehicle(identifier) != asset ||
+           !isAvailable(identifier)){ return null; }
 
         Rental rental = new Rental(asset, renter, duration);
         rentals.add(rental);
@@ -89,11 +103,7 @@ public class Inventory{
 
     public void removeVehicle(String identifier){
         int index = getIndexByID(identifier);
-        if(index < 0) {
-            System.out.println("Asset " + identifier + " was not found.");
-        } else if(!isAvailable(identifier)) {
-            System.out.println("Asset " + identifier + " is currently rented and cannot be removed.");
-        } else {
+        if(index >= 0 && isAvailable(identifier)){
             lotStock.get(index).record(identifier + " was removed from the inventory.");
             lotStock.remove(index);
         }
