@@ -9,6 +9,12 @@ public class Rental{
     private boolean active;
 
     public Rental(Vehicle rentedVehicle, Renter customer, int rentalDuration){
+        if(rentedVehicle == null || customer == null){
+            throw new IllegalArgumentException("Vehicle and renter are required.");
+        }
+        if(rentalDuration <= 0){
+            throw new IllegalArgumentException("Rental duration must be greater than zero.");
+        }
         vehicle = rentedVehicle;
         renter = customer;
         duration = rentalDuration;
@@ -20,6 +26,7 @@ public class Rental{
     public int getDuration(){ return duration; }
     public boolean isActive(){ return active; }
     public String getStatus(){ return active ? "Active" : "Returned"; }
+    public double getTotalCharge(){ return vehicle.calculateRentalCost(duration); }
 
     void markReturned(){ active = false; }
 }

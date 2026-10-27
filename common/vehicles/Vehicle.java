@@ -61,4 +61,6 @@ public abstract class Vehicle{
     public void setMileage(int miles){ mileage = miles; }
     public void record(String input){ history.add(input); }
 
+    public abstract double calculateRentalCost(int rentalDays);
+
 }

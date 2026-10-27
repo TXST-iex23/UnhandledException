@@ -54,6 +54,15 @@ public class Main{
         print("");
         Rental successfulRental = store1.rentVehicle(car2, gal1, 3);
         print("Rental successful: " + (successfulRental != null));
+        if(successfulRental != null){
+            Vehicle carForPricing = successfulRental.getVehicle();
+            double carCharge = carForPricing.calculateRentalCost(
+                successfulRental.getDuration());
+            print("Car rental charge: $" +
+                  String.format("%.2f", carCharge));
+            print("Rental charge matches: " +
+                  (carCharge == successfulRental.getTotalCharge()));
+        }
 
         Rental duplicateRental = store1.rentVehicle(car2, guy1, 2);
         print("Duplicate rental rejected: " + (duplicateRental == null));
@@ -62,6 +71,20 @@ public class Main{
         print("Return successful: " +
               (returnedRental != null && !returnedRental.isActive()));
         print(car2.getHistory());
+
+        Vehicle motorcycle = new Motorcycle(2024, "Honda", "Rebel");
+        store1.addVehicle(motorcycle, "M0001");
+        Rental motorcycleRental = store1.rentVehicle(motorcycle, gal1, 3);
+        print("Motorcycle rental successful: " + (motorcycleRental != null));
+        if(motorcycleRental != null){
+            Vehicle motorcycleForPricing = motorcycleRental.getVehicle();
+            double motorcycleCharge = motorcycleForPricing.calculateRentalCost(
+                motorcycleRental.getDuration());
+            print("Motorcycle rental charge: $" +
+                  String.format("%.2f", motorcycleCharge));
+            print("Rental charge matches: " +
+                  (motorcycleCharge == motorcycleRental.getTotalCharge()));
+        }
 
 
 
