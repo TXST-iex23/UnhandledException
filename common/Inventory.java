@@ -35,6 +35,22 @@ public class Inventory{
         return lotStock.get(index);
     }
 
+    public ArrayList<Vehicle> getAvailableVehicles(){
+        ArrayList<Vehicle> availableVehicles = new ArrayList<>();
+        for(Vehicle asset : lotStock){
+            if(isAvailable(asset.getID())){ availableVehicles.add(asset); }
+        }
+        return availableVehicles;
+    }
+
+    public ArrayList<Rental> getActiveRentals(){
+        ArrayList<Rental> activeRentals = new ArrayList<>();
+        for(Rental rental : rentals){
+            if(rental.isActive()){ activeRentals.add(rental); }
+        }
+        return activeRentals;
+    }
+
     public boolean isAvailable(String identifier){
         Vehicle asset = findVehicle(identifier);
         if(asset == null){ return false; }
