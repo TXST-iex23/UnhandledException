@@ -8,17 +8,34 @@ import common.Renter;
 import common.Rental;
 import common.vehicles.Vehicle;
 
+/**
+ * Reads user choices and displays results for the vehicle rental application.
+ * Rental rules are delegated to {@link Inventory}, keeping terminal input and
+ * output separate from the application's core logic.
+ */
 public class ConsoleUI{
+    /** The application inventory that this menu operates on. */
     private Inventory inventory;
+    /** Reads complete lines so invalid text can be handled without input conversion errors. */
     private Scanner input;
 
+    /**
+     * Creates the console menu for an existing inventory.
+     *
+     * @param rentalInventory the inventory used by the menu
+     */
     public ConsoleUI(Inventory rentalInventory){
         inventory = rentalInventory;
         input = new Scanner(System.in);
     }
 
+    /**
+     * Displays the menu repeatedly until the user chooses Exit or input ends.
+     * Invalid menu text is handled by {@link #readInteger(String)}.
+     */
     public void run(){
         boolean running = true;
+        // The loop keeps the menu available after each completed operation.
         while(running){
             System.out.println("\n\nVehicle Rental System\n");
             System.out.println("1. View available vehicles");
@@ -48,11 +65,13 @@ public class ConsoleUI{
                     System.out.println("Goodbye.");
                     break;
                 default:
+                    // A number outside the menu range does not stop the program.
                     System.out.println("Please choose a number from 1 to 5.");
             }
         }
     }
 
+    /** Displays all vehicles that Inventory reports as available. */
     private void showAvailableVehicles(){
         ArrayList<Vehicle> vehicles = inventory.getAvailableVehicles();
         if(vehicles.isEmpty()){
@@ -61,6 +80,7 @@ public class ConsoleUI{
         }
 
         System.out.println("Available vehicles:");
+        // The shared Vehicle reference calls the correct subclass pricing override.
         for(Vehicle vehicle : vehicles){
             System.out.println(vehicle.getID() + " - " + vehicle.getYear() + " " +
                 vehicle.getMaker() + " " + vehicle.getModel() + " ($" +
@@ -68,6 +88,11 @@ public class ConsoleUI{
         }
     }
 
+    /**
+     * Collects rental details and asks Inventory to begin the rental.
+     * Invalid IDs and unavailable vehicles are rejected before customer details
+     * are collected.
+     */
     private void rentVehicle(){
         String identifier = readLine("Enter the vehicle ID: ");
         if(identifier == null){ return; }
@@ -90,6 +115,7 @@ public class ConsoleUI{
         if(duration == null){ return; }
 
         Renter renter = new Renter(firstName.trim(), lastName.trim());
+        // Inventory performs the final availability and duration checks as well.
         Rental rental = inventory.rentVehicle(vehicle, renter, duration);
         if(rental == null){
             System.out.println("The rental could not be created.");
@@ -99,6 +125,7 @@ public class ConsoleUI{
         }
     }
 
+    /** Asks Inventory to complete the active rental for a vehicle ID. */
     private void returnVehicle(){
         String identifier = readLine("Enter the vehicle ID to return: ");
         if(identifier == null){ return; }
@@ -111,6 +138,7 @@ public class ConsoleUI{
         }
     }
 
+    /** Displays current rentals and their charges. */
     private void showActiveRentals(){
         ArrayList<Rental> rentals = inventory.getActiveRentals();
         if(rentals.isEmpty()){
@@ -119,6 +147,7 @@ public class ConsoleUI{
         }
 
         System.out.println("Active rentals:");
+        // Rental calculates each total through its vehicle's pricing method.
         for(Rental rental : rentals){
             Vehicle vehicle = rental.getVehicle();
             System.out.println(vehicle.getID() + " - " + vehicle.getMaker() + " " +
@@ -128,7 +157,14 @@ public class ConsoleUI{
         }
     }
 
+    /**
+     * Reads and parses an integer, prompting again when the input is not numeric.
+     *
+     * @param prompt the message shown before reading input
+     * @return the parsed integer, or {@code null} when input has ended
+     */
     private Integer readInteger(String prompt){
+        // Retrying keeps malformed text from reaching the menu's numeric logic.
         while(true){
             String value = readLine(prompt);
             if(value == null){ return null; }
@@ -140,6 +176,12 @@ public class ConsoleUI{
         }
     }
 
+    /**
+     * Reads an integer until it is greater than zero.
+     *
+     * @param prompt the message shown before reading input
+     * @return a positive integer, or {@code null} when input has ended
+     */
     private Integer readPositiveInteger(String prompt){
         while(true){
             Integer value = readInteger(prompt);
@@ -149,6 +191,12 @@ public class ConsoleUI{
         }
     }
 
+    /**
+     * Reads a required text value and prompts again if it is blank.
+     *
+     * @param prompt the message shown before reading input
+     * @return trimmed nonblank text, or {@code null} when input has ended
+     */
     private String readRequiredText(String prompt){
         while(true){
             String value = readLine(prompt);
@@ -158,6 +206,12 @@ public class ConsoleUI{
         }
     }
 
+    /**
+     * Displays a prompt and reads one line without converting it.
+     *
+     * @param prompt the message shown to the user
+     * @return the entered line, or {@code null} at end of input
+     */
     private String readLine(String prompt){
         System.out.print(prompt);
         if(!input.hasNextLine()){ return null; }
