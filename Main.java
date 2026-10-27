@@ -50,6 +50,19 @@ public class Main{
         Date dayOut = new Date(2020,3,15);
         print("Day count: " + store1.cntDays(dayOut, dayIn ));
 
+        // Testing vehicle rentals and returns
+        print("");
+        Rental successfulRental = store1.rentVehicle(car2, gal1, 3);
+        print("Rental successful: " + (successfulRental != null));
+
+        Rental duplicateRental = store1.rentVehicle(car2, guy1, 2);
+        print("Duplicate rental rejected: " + (duplicateRental == null));
+
+        Rental returnedRental = store1.returnVehicle("C0002");
+        print("Return successful: " +
+              (returnedRental != null && !returnedRental.isActive()));
+        print(car2.getHistory());
+
 
 
     }

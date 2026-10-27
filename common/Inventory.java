@@ -6,6 +6,7 @@ import common.vehicles.*;
 public class Inventory{
     private String agencyLocation;
     private ArrayList<Vehicle> lotStock = new ArrayList<>();
+    private ArrayList<Rental> rentals = new ArrayList<>();
 
     public Inventory() { agencyLocation = "Original Lot"; }
     public Inventory(String lotLocation) { agencyLocation = lotLocation; }
@@ -34,10 +35,48 @@ public class Inventory{
         return lotStock.get(index);
     }
 
+    public boolean isAvailable(String identifier){
+        Vehicle asset = findVehicle(identifier);
+        if(asset == null){ return false; }
+
+        for(Rental rental : rentals){
+            if(rental.isActive() && rental.getVehicle() == asset){ return false; }
+        }
+        return true;
+    }
+
+    public Rental rentVehicle(Vehicle asset, Renter renter, int duration){
+        if(asset == null || renter == null || duration <= 0){ return null; }
+        if(findVehicle(asset.getID()) != asset || !isAvailable(asset.getID())){ return null; }
+
+        Rental rental = new Rental(asset, renter, duration);
+        rentals.add(rental);
+        asset.record(asset.getID() + " was rented by " + renter.getName() +
+                     " for " + duration + " days.");
+        return rental;
+    }
+
+    public Rental returnVehicle(String identifier){
+        Vehicle asset = findVehicle(identifier);
+        if(asset == null){ return null; }
+
+        for(Rental rental : rentals){
+            if(rental.isActive() && rental.getVehicle() == asset){
+                rental.markReturned();
+                asset.record(asset.getID() + " was returned by " +
+                             rental.getRenter().getName() + ".");
+                return rental;
+            }
+        }
+        return null;
+    }
+
     public void removeVehicle(String identifier){
         int index = getIndexByID(identifier);
         if(index < 0) {
             System.out.println("Asset " + identifier + " was not found.");
+        } else if(!isAvailable(identifier)) {
+            System.out.println("Asset " + identifier + " is currently rented and cannot be removed.");
         } else {
             lotStock.get(index).record(identifier + " was removed from the inventory.");
             lotStock.remove(index);
