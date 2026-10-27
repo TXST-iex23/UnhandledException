@@ -47,8 +47,8 @@ public class Renter{
     public String getName(){ return lName + ", " + fName; }
     public Date getDOB(){ return dob; }
     public String getLicense() {return dLicense; }
-    public getPayment () { return CreditCard; }
-    public void getInsurance(String provider, String acct) {
+    public String getPayment () { return CreditCard; }
+    public String getInsurance() {
         return InsuranceProvider  +": "+InsuranceAcct;
     }
 }

@@ -3,7 +3,7 @@ import common.*;
 import common.vehicles.*;
 
 public class Main{
-    public void main(String args[]){
+    public static void main(String[] args){
 
         // Testing Date Class
         Date defaultDate = new Date();
@@ -54,5 +54,5 @@ public class Main{
 
     }
 
-    public void print(String someString) { System.out.println(someString); }
+    public static void print(String someString) { System.out.println(someString); }
 }
