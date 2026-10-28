@@ -40,6 +40,9 @@ After the application starts, follow the on-screen prompts and instructions to i
 
 ## Features and Limitations
 + Calculates final price of rental.
++ Does not account for mileage and fuel refills.
++ Does not yet use dates to calculate rental cost.
++ 
 + Demonstration only. No changes are saved when exiting software; 
 
 ### Team Members
