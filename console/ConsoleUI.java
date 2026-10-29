@@ -38,12 +38,13 @@ public class ConsoleUI{
         // The loop keeps the menu available after each completed operation.
         while(running){
             System.out.println("\n\nVehicle Rental System: "+ inventory.CurrentDateString());
-            System.out.println("  Lot: "+ inventory.getLotName() +"\n");
+            System.out.println("Lot: "+ inventory.getLotName() +"\n");
             System.out.println("1. View available vehicles");
             System.out.println("2. Rent a vehicle");
             System.out.println("3. Return a vehicle");
             System.out.println("4. View active rentals");
-            System.out.println("5. Exit");
+            System.out.println("5. View vehicle history");
+            System.out.println("6. Exit");
 
             Integer choice = readInteger("Choose an option: ");
             if(choice == null){ break; }
@@ -62,6 +63,9 @@ public class ConsoleUI{
                     showActiveRentals();
                     break;
                 case 5:
+                    showVehicleHistory();
+                    break;
+                case 6:
                     running = false;
                     System.out.println("Goodbye.");
                     break;
@@ -155,6 +159,26 @@ public class ConsoleUI{
                 vehicle.getModel() + ", renter: " + rental.getRenter().getName() +
                 ", days: " + rental.getDuration() + ", charge: $" +
                 String.format("%.2f", rental.getTotalCharge()));
+        }
+    }
+
+    /** Displays a vehicles history. */
+    private void showVehicleHistory() {
+        ArrayList<Vehicle> vehicles = inventory.getAvailableVehicles();
+        if(vehicles.isEmpty()){
+            System.out.println("There are no vehicles to assess.");
+            return;
+        }
+        String identifier = readLine("Enter the vehicle ID to assess.  ");
+        Vehicle vehicle = inventory.findVehicle(identifier.trim());
+        if(vehicle == null){
+            System.out.println("That vehicle ID was not found.");
+            return;
+        }
+        else{
+            System.out.println("\n" + identifier + "'s Vehicle History:");
+            System.out.println(vehicle.getAllHistory());
+            return;
         }
     }
 

@@ -61,7 +61,7 @@ public class Inventory{
         // A vehicle ID and vehicle object should each appear only once here.
         if(getIndexByID(vehicleID) >= 0 || findVehicleByObject(asset)){ return; }
         asset.setID(vehicleID);
-        asset.record(vehicleID + " was added to the inventory.");
+        asset.record(currentDate.getDate() + ": " + vehicleID + " was added to the inventory.");
         lotStock.add(asset);
     }
 
@@ -157,8 +157,8 @@ public class Inventory{
         Rental rental = new Rental(asset, renter, duration);
         rentals.add(rental);
         // The vehicle stays in inventory; its active rental makes it unavailable.
-        asset.record(asset.getID() + " was rented by " + renter.getName() +
-                     " for " + duration + " days.");
+        asset.record(currentDate.getDate() + ": " + asset.getID() + " was rented by " +
+            renter.getName() + " for " + duration + " days.");
         return rental;
     }
 
@@ -177,8 +177,8 @@ public class Inventory{
         for(Rental rental : rentals){
             if(rental.isActive() && rental.getVehicle() == asset){
                 rental.markReturned();
-                asset.record(asset.getID() + " was returned by " +
-                             rental.getRenter().getName() + ".");
+                asset.record(currentDate.getDate() + ": " + asset.getID() +
+                    " was returned by " + rental.getRenter().getName() + ".");
                 return rental;
             }
         }
@@ -195,7 +195,8 @@ public class Inventory{
         int index = getIndexByID(identifier);
         // Keep the vehicle in the lot until its active rental has been returned.
         if(index >= 0 && isAvailable(identifier)){
-            lotStock.get(index).record(identifier + " was removed from the inventory.");
+            lotStock.get(index).record(currentDate.getDate() + ": " + identifier +
+                " was removed from the inventory.");
             lotStock.remove(index);
         }
     }
