@@ -6,6 +6,7 @@ import java.util.Scanner;
 import common.Inventory;
 import common.Renter;
 import common.Rental;
+import common.vehicles.Car;
 import common.vehicles.Vehicle;
 
 /**
@@ -260,10 +261,10 @@ public class ConsoleUI{
 
             switch(choice){
                 case 1:
-                    System.out.println("\nNot yet programmed in");
+                    addVehiclePrompt();
                     break;
                 case 2:
-                    System.out.println("\nNot yet programmed in");
+                    removeVehiclePrompt();
                     break;
                 case 3:
                     showVehicleHistory();
@@ -274,5 +275,34 @@ public class ConsoleUI{
                     break;
             }
         }
+    }
+
+    private void addVehiclePrompt(){
+        String vType;
+        Integer choice = readInteger("Is the new vehicle a Car (1) or motorcycle (2)? ");
+        if(choice == null){ return; }
+        if(choice == 1){vType = "C";}
+        else if(choice == 2){vType = "M";}
+        else { return; }
+
+        String maker = readLine("Enter the new vehicle's maker: ");
+        if(maker == null){ return; }
+
+        String model = readLine("Enter the model of the vehicle: ");
+        if(model == null){ return; }
+
+        String year = readLine("Now enter the year of the vehicle: ");
+        if(year == null){ return; }
+
+        inventory.addVehicle(new Car(year, maker,model,vType));
+        System.out.println("The vehicle was added as " +
+            inventory.getAvailableVehicles().getLast().getID() + " into the system.");
+    }
+
+    private void removeVehiclePrompt(){
+        String id = readLine("Enter the ID of the vehicle to remove? ");
+        if(id == null){ return; }
+        inventory.removeVehicle(id);
+        System.out.println(id + "was removed from the system.");
     }
 }
