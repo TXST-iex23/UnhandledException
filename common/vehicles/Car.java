@@ -5,6 +5,9 @@ package common.vehicles;
  * It inherits the shared vehicle fields and methods from its superclass.
  */
 public class Car extends Vehicle{
+    /* Signifies a car via the identifier */
+    private String vehicleType = "C";
+
     /**
      * Creates a car from a text model year, manufacturer, and model.
      *
@@ -12,8 +15,8 @@ public class Car extends Vehicle{
      * @param mkr the manufacturer
      * @param mdl the model name
      */
-    public Car(String yr, String mkr, String mdl){
-        super(yr, mkr, mdl);
+    public Car(String yr, String mkr, String mdl, String vType){
+        super(yr, mkr, mdl,vType);
     }
 
     /**
@@ -23,13 +26,16 @@ public class Car extends Vehicle{
      * @param mkr the manufacturer
      * @param mdl the model name
      */
-    public Car(int yr, String mkr, String mdl){
-        super(yr, mkr, mdl);
+    public Car(int yr, String mkr, String mdl,String vType){
+        super(yr, mkr, mdl,vType);
     }
 
     /** Creates a car with the superclass's placeholder values. */
     public Car (){
         super();
+        String temp = super.getID();
+        temp = vehicleType + temp.substring(1);
+        super.setID(temp);
     }
 
     /**

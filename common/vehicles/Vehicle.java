@@ -11,13 +11,15 @@ public abstract class Vehicle{
     /** The inventory ID assigned to this vehicle. */
     private String assetNo;
     /** The model year, stored as text to support the existing constructor forms. */
+    private static int assetInt = 1000;
+    /** The model year, stored as text to support the existing constructor forms. */
     private String year;
     /** The vehicle manufacturer. */
     private String maker;
     /** The vehicle model name. */
     private String model;
     /** An optional descriptive type for the vehicle. */
-    private String vehicleType;
+    private String vehicleType = "V";
     /** The vehicle's mileage. */
     private int mileage;
     /** Messages describing inventory, rental, return, and other vehicle events. */
@@ -25,11 +27,10 @@ public abstract class Vehicle{
 
     /** Creates a vehicle with placeholder details and an empty history. */
     public Vehicle(){
-        assetNo = "undefined";
+        assetNo = vehicleType + String.valueOf(++assetInt);
         year = "undefined";
         maker = "undefined";
         model = "undefined";
-        vehicleType = "undefined";
         mileage = 0;
         history = new ArrayList<>();
     }
@@ -41,12 +42,12 @@ public abstract class Vehicle{
      * @param mkr the manufacturer
      * @param mdl the model name
      */
-    public Vehicle(String yr, String mkr, String mdl){
-        assetNo = "undefined";
+    public Vehicle(String yr, String mkr, String mdl, String vehicleType){
+        this.vehicleType = vehicleType;
+        assetNo = vehicleType + String.valueOf(++assetInt);
         year = yr;
         maker = mkr;
         model = mdl;
-        vehicleType = "undefined";
         mileage = 0;
         history = new ArrayList<>();
     }
@@ -58,12 +59,12 @@ public abstract class Vehicle{
      * @param mkr the manufacturer
      * @param mdl the model name
      */
-    public Vehicle(int yr, String mkr, String mdl){
-        assetNo = "undefined";
+    public Vehicle(int yr, String mkr, String mdl,String vehicleType){
+        this.vehicleType = vehicleType;
+        assetNo = vehicleType + String.valueOf(++assetInt);
         year = String.valueOf(yr);
         maker = mkr;
         model = mdl;
-        vehicleType = "undefined";
         mileage = 0;
         history = new ArrayList<>();
     }
@@ -106,6 +107,8 @@ public abstract class Vehicle{
         return allHistory.toString();
     }
 
+    /** Autoset the the inventory ID */
+    public void setID(){ assetNo = vehicleType + String.valueOf(++assetInt); }
     /** @param id the inventory ID to store */
     public void setID(String id){ assetNo = id; }
     /** @param yr the model year to store */

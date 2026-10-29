@@ -54,10 +54,10 @@ public class Inventory{
      * @param asset the vehicle to add
      * @param identifier the unique ID to assign to the vehicle
      */
-    public void addVehicle(Vehicle asset, String identifier){
+    public void addVehicle(Vehicle asset){
         // Reject bad input before changing the vehicle or its history.
-        if(asset == null || identifier == null || identifier.trim().isEmpty()){ return; }
-        String vehicleID = identifier.trim();
+        if(asset == null){ return; }
+        String vehicleID = asset.getID();
         // A vehicle ID and vehicle object should each appear only once here.
         if(getIndexByID(vehicleID) >= 0 || findVehicleByObject(asset)){ return; }
         asset.setID(vehicleID);

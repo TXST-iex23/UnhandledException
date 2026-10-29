@@ -28,18 +28,18 @@ public class VehicleRentalValidationTest{
     /** Checks inventory, rental, return, pricing, and vehicle-history behavior. */
     private static void testInventoryAndRentals(){
         Inventory inventory = new Inventory();
-        Car car = new Car(2022, "Toyota", "Camry");
+        Car car = new Car(2022, "Toyota", "Camry","C");
         // Leading and trailing spaces are trimmed before an ID is stored.
-        inventory.addVehicle(car, " C0001 ");
+        inventory.addVehicle(car);
         check(inventory.findVehicle("C0001") == car, "valid vehicle can be added");
         check(inventory.findVehicle("   ") == null, "blank vehicle ID is rejected");
 
-        inventory.addVehicle(new Car(2023, "Honda", "Civic"), "C0001");
+        inventory.addVehicle(new Car(2023, "Honda", "Civic","C"));
         // The existing vehicle remains the match when an ID is duplicated.
         check(inventory.findVehicle("C0001") == car, "duplicate ID is rejected");
-        inventory.addVehicle(car, "C0002");
+        inventory.addVehicle(car);
         check(inventory.findVehicle("C0002") == null, "same vehicle cannot be added twice");
-        inventory.addVehicle(null, "C0003");
+        inventory.addVehicle(null);
         check(inventory.findVehicle("C0003") == null, "null vehicle is rejected");
 
         Vehicle unusedVehicle = new Car();
