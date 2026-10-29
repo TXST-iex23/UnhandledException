@@ -1,5 +1,7 @@
 package common;
 
+import java.time.LocalDate;
+
 /**
  * Stores a calendar date and a day code that can be used to compare dates.
  * The day code counts days relative to January 1, 1900.
@@ -152,6 +154,19 @@ public class Date{
      * @return the number of days relative to January 1, 1900
      */
     public int getDateCode() { return dateCode; }
+
+    /**
+     * Produces a Date object to be used in duration/rental cost calculations.
+     *
+     * @return an instance of this Date class with the current date
+     */
+    public Date today() {
+        int yr = LocalDate.now().getYear();
+        int mo = LocalDate.now().getMonthValue();
+        int dy = LocalDate.now().getDayOfMonth();
+        this.setDate(yr, mo, dy);
+        return this;
+    }
 
     /**
      * Uses the readable date form when this object is printed.

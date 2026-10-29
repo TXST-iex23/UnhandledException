@@ -37,7 +37,8 @@ public class ConsoleUI{
         boolean running = true;
         // The loop keeps the menu available after each completed operation.
         while(running){
-            System.out.println("\n\nVehicle Rental System\n");
+            System.out.println("\n\nVehicle Rental System: "+ inventory.CurrentDateString());
+            System.out.println("  Lot: "+ inventory.getLotName() +"\n");
             System.out.println("1. View available vehicles");
             System.out.println("2. Rent a vehicle");
             System.out.println("3. Return a vehicle");

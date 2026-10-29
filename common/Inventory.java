@@ -14,6 +14,9 @@ public class Inventory{
     private ArrayList<Vehicle> lotStock = new ArrayList<>();
     /** Current and completed rentals created by this inventory. */
     private ArrayList<Rental> rentals = new ArrayList<>();
+    /** The Date object with the current date */
+    private Date currentDate = new Date().today();
+
 
     /** Creates an inventory with the default location name. */
     public Inventory() { agencyLocation = "Original Lot"; }
@@ -196,6 +199,22 @@ public class Inventory{
             lotStock.remove(index);
         }
     }
+
+    /**
+     * Calculates the number of days between two dates using their day codes.
+     *
+     * @return String value of the current date
+     */
+    public String CurrentDateString(){
+        return String.valueOf(currentDate);
+    }
+
+    /**
+     * Returns the name of the rental lot.
+     *
+     * @return String value of the specific lot id
+     */
+    public String getLotName(){ return agencyLocation; }
 
     /**
      * Calculates the number of days between two dates using their day codes.
