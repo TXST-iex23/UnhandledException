@@ -37,13 +37,13 @@ public class ConsoleUI{
         boolean running = true;
         // The loop keeps the menu available after each completed operation.
         while(running){
-            System.out.println("\n\nVehicle Rental System: "+ inventory.CurrentDateString());
+            System.out.println("\nVehicle Rental System: "+ inventory.CurrentDateString());
             System.out.println("Lot: "+ inventory.getLotName() +"\n");
             System.out.println("1. View available vehicles");
             System.out.println("2. Rent a vehicle");
             System.out.println("3. Return a vehicle");
             System.out.println("4. View active rentals");
-            System.out.println("5. View vehicle history");
+            System.out.println("5. Administrator options");
             System.out.println("6. Exit");
 
             Integer choice = readInteger("Choose an option: ");
@@ -63,7 +63,7 @@ public class ConsoleUI{
                     showActiveRentals();
                     break;
                 case 5:
-                    showVehicleHistory();
+                    adminMenu();
                     break;
                 case 6:
                     running = false;
@@ -71,7 +71,7 @@ public class ConsoleUI{
                     break;
                 default:
                     // A number outside the menu range does not stop the program.
-                    System.out.println("Please choose a number from 1 to 5.");
+                    System.out.println("Please choose a number from 1 to 6.");
             }
         }
     }
@@ -172,7 +172,7 @@ public class ConsoleUI{
         String identifier = readLine("Enter the vehicle ID to assess.  ");
         Vehicle vehicle = inventory.findVehicle(identifier.trim());
         if(vehicle == null){
-            System.out.println("That vehicle ID was not found.");
+            System.out.println("\nThat vehicle ID was not found.");
             return;
         }
         else{
@@ -241,5 +241,38 @@ public class ConsoleUI{
         System.out.print(prompt);
         if(!input.hasNextLine()){ return null; }
         return input.nextLine();
+    }
+
+    /** Asks Inventory to complete the active rental for a vehicle ID. */
+    private void adminMenu(){
+        boolean runMenu2 = true;
+        // The loop keeps the menu available after each completed operation.
+        while(runMenu2){
+            System.out.println("\n*** Administrator Menu ***");
+            System.out.println("Lot: "+ inventory.getLotName() +"\n");
+            System.out.println("1. Add a vehicle");
+            System.out.println("2. Remove a vehicle");
+            System.out.println("3. View vehicle history");
+            System.out.println("4. Return to previous menu.");
+
+            Integer choice = readInteger("Choose an option: ");
+            if(choice == null){ break; }
+
+            switch(choice){
+                case 1:
+                    System.out.println("\nNot yet programmed in");
+                    break;
+                case 2:
+                    System.out.println("\nNot yet programmed in");
+                    break;
+                case 3:
+                    showVehicleHistory();
+                    break;
+                default:
+                    // A number outside the menu range returns to top menu.
+                    runMenu2 = false;
+                    break;
+            }
+        }
     }
 }
