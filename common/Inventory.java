@@ -14,6 +14,8 @@ public class Inventory{
     private ArrayList<Vehicle> lotStock = new ArrayList<>();
     /** Current and completed rentals created by this inventory. */
     private ArrayList<Rental> rentals = new ArrayList<>();
+    /** Number used to assign the next reservation ID. */
+    private int nextReservationNumber = 1;
 
     /** Creates an inventory with the default location name. */
     public Inventory() { agencyLocation = "Original Lot"; }
@@ -104,6 +106,23 @@ public class Inventory{
     }
 
     /**
+     * Makes a list of vehicles free for the full requested period.
+     *
+     * @param pickupDate the first day of the requested period
+     * @param duration the number of occupied days
+     * @return available vehicles, or an empty list for an invalid period
+     */
+    public ArrayList<Vehicle> getAvailableVehicles(Date pickupDate, int duration){
+        ArrayList<Vehicle> availableVehicles = new ArrayList<>();
+        for(Vehicle asset : lotStock){
+            if(isAvailableForPeriod(asset.getID(), pickupDate, duration)){
+                availableVehicles.add(asset);
+            }
+        }
+        return availableVehicles;
+    }
+
+    /**
      * Makes a new list of rentals that have not yet been returned.
      *
      * @return a list of active rentals
@@ -118,20 +137,139 @@ public class Inventory{
     }
 
     /**
+     * Makes a list containing reservations that have not been cancelled or activated.
+     *
+     * @return the pending reservations
+     */
+    public ArrayList<Rental> getReservations(){
+        ArrayList<Rental> reservations = new ArrayList<>();
+        for(Rental rental : rentals){
+            if(rental.getLifecycleState() == Rental.Status.RESERVED){
+                reservations.add(rental);
+            }
+        }
+        return reservations;
+    }
+
+    /**
      * Checks whether an inventory vehicle is not part of an active rental.
      *
      * @param identifier the vehicle ID to check
      * @return {@code true} only when the ID belongs to an available vehicle
      */
     public boolean isAvailable(String identifier){
+        return isAvailableForPeriod(identifier, Date.today(), 1);
+    }
+
+    /**
+     * Checks whether a vehicle is free for every day in a requested period.
+     * Active rentals conservatively block the vehicle until it is returned.
+     *
+     * @param identifier the vehicle ID to check
+     * @param pickupDate the first day of the requested period
+     * @param duration the number of occupied days; must be positive
+     * @return {@code true} if the vehicle is in this inventory and has no conflict
+     */
+    public boolean isAvailableForPeriod(String identifier, Date pickupDate, int duration){
+        if(pickupDate == null || duration <= 0){ return false; }
         Vehicle asset = findVehicle(identifier);
         if(asset == null){ return false; }
 
-        // Identity comparison connects the rental to the vehicle object in this inventory.
-        for(Rental rental : rentals){
-            if(rental.isActive() && rental.getVehicle() == asset){ return false; }
+        long newStart = pickupDate.getDateCode();
+        long newEnd = newStart + duration - 1L;
+        if(newStart < Date.today().getDateCode() || newEnd > Integer.MAX_VALUE){
+            return false;
+        }
+
+        for(Rental booking : rentals){
+            if(booking.getVehicle() != asset){ continue; }
+            if(booking.getLifecycleState() == Rental.Status.ACTIVE){ return false; }
+            if(booking.getLifecycleState() == Rental.Status.RESERVED){
+                long existingStart = booking.getPickupDate().getDateCode();
+                long existingEnd = booking.getEndDayCode();
+                // Both ranges include their pickup and final occupied days.
+                if(newStart <= existingEnd && existingStart <= newEnd){ return false; }
+            }
         }
         return true;
+    }
+
+    /**
+     * Creates a reservation when the vehicle is free for the complete period.
+     * Failed requests do not change the reservation list or its next ID.
+     *
+     * @param identifier the ID of the requested vehicle
+     * @param renter the person making the reservation
+     * @param pickupDate the first day of the requested period
+     * @param duration the number of occupied days; must be positive
+     * @return the new reservation, or {@code null} if the request is invalid or unavailable
+     */
+    public Rental reserveVehicle(String identifier, Renter renter, Date pickupDate, int duration){
+        Vehicle asset = findVehicle(identifier);
+        if(asset == null || renter == null || pickupDate == null ||
+           !isAvailableForPeriod(identifier, pickupDate, duration)){
+            return null;
+        }
+
+        String reservationID = String.format("R%04d", nextReservationNumber);
+        Rental reservation = new Rental(reservationID, asset, renter, pickupDate, duration);
+        rentals.add(reservation);
+        nextReservationNumber++;
+        asset.record(reservationID + " was reserved for " + renter.getName() +
+            " starting " + pickupDate.getDateString() + ".");
+        return reservation;
+    }
+
+    /**
+     * Cancels a pending reservation. Other reservation states cannot be cancelled.
+     *
+     * @param reservationID the ID returned when the reservation was created
+     * @return {@code true} if a pending reservation was cancelled
+     */
+    public boolean cancelReservation(String reservationID){
+        Rental reservation = findReservation(reservationID);
+        if(reservation == null || !reservation.cancel()){ return false; }
+        reservation.getVehicle().record(reservation.getReservationID() + " was cancelled.");
+        return true;
+    }
+
+    /**
+     * Activates a pending reservation on its pickup date.
+     *
+     * @param reservationID the reservation ID
+     * @return the active rental, or {@code null} if activation is not allowed
+     */
+    public Rental activateReservation(String reservationID){
+        Rental reservation = findReservation(reservationID);
+        if(reservation == null ||
+           reservation.getPickupDate().getDateCode() != Date.today().getDateCode() ||
+           hasActiveRental(reservation.getVehicle())){
+            return null;
+        }
+        if(!reservation.activate()){ return null; }
+        reservation.getVehicle().record(reservationID.trim() + " was picked up.");
+        return reservation;
+    }
+
+    /** Finds a reservation by its ID only while it is pending. */
+    private Rental findReservation(String reservationID){
+        if(reservationID == null || reservationID.trim().isEmpty()){ return null; }
+        String searchID = reservationID.trim();
+        for(Rental rental : rentals){
+            if(searchID.equals(rental.getReservationID()) &&
+               rental.getLifecycleState() == Rental.Status.RESERVED){
+                return rental;
+            }
+        }
+        return null;
+    }
+
+    /** Checks whether a vehicle already has a rental that has not been returned. */
+    private boolean hasActiveRental(Vehicle asset){
+        for(Rental rental : rentals){
+            if(rental.isActive() && rental.getVehicle() == asset){ return true; }
+        }
+        return false;
     }
 
     /**
@@ -148,10 +286,11 @@ public class Inventory{
         if(asset == null || renter == null || duration <= 0){ return null; }
         String identifier = asset.getID();
         // Identity comparison ensures this is the actual inventory vehicle, not a copy.
+        Date pickupDate = Date.today();
         if(identifier == null || findVehicle(identifier) != asset ||
-           !isAvailable(identifier)){ return null; }
+           !isAvailableForPeriod(identifier, pickupDate, duration)){ return null; }
 
-        Rental rental = new Rental(asset, renter, duration);
+        Rental rental = new Rental(asset, renter, pickupDate, duration);
         rentals.add(rental);
         // The vehicle stays in inventory; its active rental makes it unavailable.
         asset.record(asset.getID() + " was rented by " + renter.getName() +

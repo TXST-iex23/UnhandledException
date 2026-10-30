@@ -3,6 +3,7 @@ package console;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import common.Date;
 import common.Inventory;
 import common.Renter;
 import common.Rental;
@@ -42,10 +43,14 @@ public class ConsoleUI{
             System.out.println("2. Rent a vehicle");
             System.out.println("3. Return a vehicle");
             System.out.println("4. View active rentals");
-            System.out.println("5. Exit");
+            System.out.println("5. Reservations");
+            System.out.println("6. Exit");
 
             Integer choice = readInteger("Choose an option: ");
-            if(choice == null){ break; }
+            if(choice == null){
+                System.out.println("Input ended. Goodbye.");
+                break;
+            }
 
             switch(choice){
                 case 1:
@@ -61,12 +66,15 @@ public class ConsoleUI{
                     showActiveRentals();
                     break;
                 case 5:
+                    running = reservationMenu();
+                    break;
+                case 6:
                     running = false;
                     System.out.println("Goodbye.");
                     break;
                 default:
                     // A number outside the menu range does not stop the program.
-                    System.out.println("Please choose a number from 1 to 5.");
+                    System.out.println("Please choose a number from 1 to 6.");
             }
         }
     }
@@ -155,6 +163,201 @@ public class ConsoleUI{
                 ", days: " + rental.getDuration() + ", charge: $" +
                 String.format("%.2f", rental.getTotalCharge()));
         }
+    }
+
+    /** Displays reservation actions until the user returns to the main menu. */
+    private boolean reservationMenu(){
+        while(true){
+            System.out.println("\n*** Reservations ***");
+            System.out.println("1. Create a reservation");
+            System.out.println("2. View pending reservations");
+            System.out.println("3. Cancel a reservation");
+            System.out.println("4. Activate a reservation for pickup");
+            System.out.println("5. Return to the main menu");
+
+            Integer choice = readInteger("Choose an option: ");
+            if(choice == null){
+                System.out.println("Input ended. Goodbye.");
+                return false;
+            }
+
+            switch(choice){
+                case 1:
+                    if(!createReservationPrompt()){
+                        System.out.println("Input ended. Goodbye.");
+                        return false;
+                    }
+                    break;
+                case 2:
+                    showReservations();
+                    break;
+                case 3:
+                    if(!cancelReservationPrompt()){
+                        System.out.println("Input ended. Goodbye.");
+                        return false;
+                    }
+                    break;
+                case 4:
+                    if(!activateReservationPrompt()){
+                        System.out.println("Input ended. Goodbye.");
+                        return false;
+                    }
+                    break;
+                case 5:
+                    return true;
+                default:
+                    System.out.println("Please choose a number from 1 to 5.");
+            }
+        }
+    }
+
+    /** Collects reservation details and saves only a valid, available request. */
+    private boolean createReservationPrompt(){
+        Date pickupDate = readPickupDate();
+        if(pickupDate == null){ return false; }
+
+        Integer duration = readPositiveInteger("Enter rental duration in days: ");
+        if(duration == null){ return false; }
+
+        ArrayList<Vehicle> available = inventory.getAvailableVehicles(pickupDate, duration);
+        if(available.isEmpty()){
+            System.out.println("No vehicles are available for that entire period.");
+            return true;
+        }
+
+        System.out.println("Vehicles available for pickup on " + pickupDate.getDateString() +
+            " for " + duration + " day(s):");
+        for(Vehicle vehicle : available){
+            System.out.println(vehicle.getID() + " - " + vehicle.getYear() + " " +
+                vehicle.getMaker() + " " + vehicle.getModel() + " ($" +
+                String.format("%.2f", vehicle.calculateRentalCost(1)) + " per day)");
+        }
+
+        Vehicle selectedVehicle = null;
+        while(selectedVehicle == null){
+            String identifier = readRequiredText("Enter the vehicle ID to reserve: ");
+            if(identifier == null){ return false; }
+
+            Vehicle candidate = inventory.findVehicle(identifier);
+            if(candidate == null){
+                System.out.println("That vehicle ID was not found.");
+            } else if(!inventory.isAvailableForPeriod(identifier, pickupDate, duration)){
+                System.out.println("That vehicle is not available for the entire requested period.");
+            } else {
+                selectedVehicle = candidate;
+            }
+        }
+
+        String firstName = readRequiredText("Enter renter first name: ");
+        if(firstName == null){ return false; }
+        String lastName = readRequiredText("Enter renter last name: ");
+        if(lastName == null){ return false; }
+
+        Renter renter = new Renter(firstName, lastName);
+        Rental reservation = inventory.reserveVehicle(selectedVehicle.getID(), renter,
+                                                       pickupDate, duration);
+        if(reservation == null){
+            System.out.println("The reservation could not be created because that period is no longer available.");
+        } else {
+            System.out.println("Reservation " + reservation.getReservationID() +
+                " created for " + selectedVehicle.getID() + " on " +
+                reservation.getPickupDate().getDateString() + ".");
+        }
+        return true;
+    }
+
+    /** Reads a valid, non-past date in MM/DD/YYYY form. */
+    private Date readPickupDate(){
+        while(true){
+            String value = readLine("Enter pickup date (MM/DD/YYYY): ");
+            if(value == null){ return null; }
+            String[] parts = value.trim().split("/", -1);
+            if(parts.length != 3){
+                System.out.println("Enter a valid date in MM/DD/YYYY format, such as 12/31/2027.");
+                continue;
+            }
+
+            try{
+                int month = Integer.parseInt(parts[0].trim());
+                int day = Integer.parseInt(parts[1].trim());
+                int year = Integer.parseInt(parts[2].trim());
+                Date pickupDate = new Date(year, month, day);
+                if(pickupDate.getDateCode() < Date.today().getDateCode()){
+                    System.out.println("Pickup date cannot be in the past.");
+                    continue;
+                }
+                return pickupDate;
+            } catch(IllegalArgumentException exception){
+                System.out.println("Enter a valid date in MM/DD/YYYY format, such as 12/31/2027.");
+            }
+        }
+    }
+
+    /** Displays pending reservations, if any. */
+    private void showReservations(){
+        ArrayList<Rental> reservations = inventory.getReservations();
+        if(reservations.isEmpty()){
+            System.out.println("There are no pending reservations.");
+            return;
+        }
+
+        System.out.println("Pending reservations:");
+        for(Rental reservation : reservations){
+            Vehicle vehicle = reservation.getVehicle();
+            System.out.println(reservation.getReservationID() + " - " + vehicle.getID() +
+                " " + vehicle.getMaker() + " " + vehicle.getModel() +
+                ", renter: " + reservation.getRenter().getName() +
+                ", pickup: " + reservation.getPickupDate().getDateString() +
+                ", days: " + reservation.getDuration());
+        }
+    }
+
+    /** Cancels a pending reservation by its reservation ID. */
+    private boolean cancelReservationPrompt(){
+        String reservationID = readRequiredText("Enter reservation ID to cancel: ");
+        if(reservationID == null){ return false; }
+        if(inventory.cancelReservation(reservationID)){
+            System.out.println("Reservation " + reservationID + " cancelled.");
+        } else {
+            System.out.println("No pending reservation with that ID was found.");
+        }
+        return true;
+    }
+
+    /** Activates a pending reservation only on its pickup date. */
+    private boolean activateReservationPrompt(){
+        String reservationID = readRequiredText("Enter reservation ID to activate: ");
+        if(reservationID == null){ return false; }
+
+        Rental reservation = findPendingReservation(reservationID);
+        if(reservation == null){
+            System.out.println("No pending reservation with that ID was found.");
+            return true;
+        }
+        Date pickupDate = reservation.getPickupDate();
+        if(pickupDate.getDateCode() != Date.today().getDateCode()){
+            System.out.println("Reservation " + reservationID + " can only be activated on " +
+                pickupDate.getDateString() + ".");
+            return true;
+        }
+
+        Rental activeRental = inventory.activateReservation(reservationID);
+        if(activeRental == null){
+            System.out.println("The reservation could not be activated.");
+        } else {
+            System.out.println("Reservation " + reservationID + " is now an active rental.");
+        }
+        return true;
+    }
+
+    /** Finds a pending reservation for displaying a useful activation message. */
+    private Rental findPendingReservation(String reservationID){
+        for(Rental reservation : inventory.getReservations()){
+            if(reservation.getReservationID().equals(reservationID.trim())){
+                return reservation;
+            }
+        }
+        return null;
     }
 
     /**

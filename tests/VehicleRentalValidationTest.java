@@ -1,5 +1,7 @@
 package tests;
 
+import java.time.LocalDate;
+
 import common.Date;
 import common.Inventory;
 import common.Renter;
@@ -22,6 +24,7 @@ public class VehicleRentalValidationTest{
     public static void main(String[] args){
         testInventoryAndRentals();
         testCustomerAndDateValidation();
+        testReservations();
         System.out.println("Passed " + checks + " validation checks.");
     }
 
@@ -105,6 +108,122 @@ public class VehicleRentalValidationTest{
         checkThrows(() -> new Date(1900, 2, 29),
                     "invalid non-leap date is rejected");
         checkThrows(() -> new Date(2024, 13, 1), "invalid month is rejected");
+    }
+
+    /** Checks reservation validation, date conflicts, and lifecycle changes. */
+    private static void testReservations(){
+        Inventory inventory = new Inventory();
+        Car firstCar = new Car(2022, "Toyota", "Camry");
+        Car secondCar = new Car(2023, "Honda", "Civic");
+        inventory.addVehicle(firstCar, "C9001");
+        inventory.addVehicle(secondCar, "C9002");
+        Renter renter = new Renter("Jamie", "Student");
+        Date firstPickup = dateAfter(5);
+
+        check(inventory.reserveVehicle("UNKNOWN", renter, firstPickup, 3) == null,
+              "unknown vehicle cannot be reserved");
+        check(inventory.reserveVehicle("C9001", null, firstPickup, 3) == null,
+              "reservation requires a renter");
+        check(inventory.reserveVehicle("C9001", renter, null, 3) == null,
+              "reservation requires a pickup date");
+        check(inventory.reserveVehicle("C9001", renter, dateAfter(-1), 3) == null,
+              "past pickup date is rejected");
+        check(inventory.reserveVehicle("C9001", renter, firstPickup, 0) == null,
+              "zero-day reservation is rejected");
+        check(inventory.reserveVehicle("C9001", renter, firstPickup, -1) == null,
+              "negative-day reservation is rejected");
+        check(inventory.getReservations().isEmpty(),
+              "invalid reservation requests leave the list unchanged");
+
+        Rental first = inventory.reserveVehicle("C9001", renter, firstPickup, 3);
+        check(first != null && first.getReservationID().equals("R0001"),
+              "valid reservation is created after invalid requests");
+        check(first.getLifecycleState() == Rental.Status.RESERVED,
+              "new reservation starts in reserved state");
+        check(!inventory.getAvailableVehicles(firstPickup, 3).contains(firstCar) &&
+              inventory.getAvailableVehicles(firstPickup, 3).contains(secondCar),
+              "period availability excludes only the reserved vehicle");
+
+        int savedPickupCode = first.getPickupDate().getDateCode();
+        firstPickup.setDate(2000, 1, 1);
+        Date returnedPickup = first.getPickupDate();
+        returnedPickup.setDate(2000, 1, 1);
+        check(first.getPickupDate().getDateCode() == savedPickupCode,
+              "reservation keeps a protected copy of its pickup date");
+
+        check(inventory.reserveVehicle("C9001", renter, dateAfter(7), 1) == null,
+              "reservation sharing the final occupied day is rejected");
+        check(inventory.getReservations().size() == 1 &&
+              first.getLifecycleState() == Rental.Status.RESERVED,
+              "overlap rejection leaves existing reservation unchanged");
+
+        Rental adjacent = inventory.reserveVehicle("C9001", renter, dateAfter(8), 2);
+        check(adjacent != null, "adjacent reservation periods are allowed");
+        check(adjacent.getReservationID().equals("R0002"),
+              "adjacent reservation receives the next ID");
+
+        check(inventory.cancelReservation(first.getReservationID()),
+              "pending reservation can be cancelled");
+        check(first.getLifecycleState() == Rental.Status.CANCELLED,
+              "cancellation changes the reservation state");
+        Rental replacement = inventory.reserveVehicle("C9001", renter, dateAfter(5), 3);
+        check(replacement != null, "cancellation frees the reserved dates");
+        check(!inventory.cancelReservation("NO-SUCH-RESERVATION"),
+              "unknown reservation ID is rejected");
+        check(!inventory.cancelReservation(first.getReservationID()),
+              "cancelled reservation cannot be cancelled again");
+        check(first.getLifecycleState() == Rental.Status.CANCELLED &&
+              inventory.getReservations().size() == 2,
+              "invalid cancellation leaves current reservation state unchanged");
+
+        Rental future = inventory.reserveVehicle("C9002", renter, dateAfter(1), 2);
+        check(future != null, "second vehicle can be reserved for a future date");
+        check(inventory.activateReservation("UNKNOWN") == null,
+              "unknown reservation cannot be activated");
+        check(inventory.activateReservation(future.getReservationID()) == null,
+              "reservation cannot be activated before its pickup date");
+        check(future.getLifecycleState() == Rental.Status.RESERVED &&
+              inventory.getReservations().contains(future),
+              "early activation leaves reservation pending");
+        check(inventory.cancelReservation(future.getReservationID()),
+              "future reservation can be cancelled");
+
+        Rental today = inventory.reserveVehicle("C9002", renter, Date.today(), 2);
+        check(today != null, "today is accepted as a pickup date");
+        check(!inventory.isAvailable("C9002"),
+              "reservation starting today makes vehicle unavailable today");
+        check(inventory.rentVehicle(secondCar, renter, 1) == null,
+              "immediate rental cannot overlap a pending reservation");
+
+        Rental activated = inventory.activateReservation(today.getReservationID());
+        check(activated == today && today.isActive(),
+              "reservation activates on its pickup date");
+        check(today.getLifecycleState() == Rental.Status.ACTIVE &&
+              !inventory.getReservations().contains(today),
+              "activated reservation leaves the pending list");
+        check(inventory.reserveVehicle("C9002", renter, dateAfter(10), 1) == null,
+              "active rental prevents another reservation");
+        check(!inventory.cancelReservation(today.getReservationID()),
+              "active rental cannot be cancelled as a reservation");
+
+        Rental returned = inventory.returnVehicle("C9002");
+        check(returned == today && today.getLifecycleState() == Rental.Status.RETURNED,
+              "existing return process completes an activated reservation");
+        check(!today.isActive() && inventory.isAvailable("C9002"),
+              "returned activated reservation releases the vehicle");
+        check(inventory.returnVehicle("C9002") == null,
+              "returned rental cannot be returned again");
+        check(!inventory.cancelReservation(today.getReservationID()) &&
+              today.getLifecycleState() == Rental.Status.RETURNED,
+              "returned reservation cannot be cancelled");
+        check(inventory.activateReservation(today.getReservationID()) == null,
+              "returned reservation cannot be activated again");
+    }
+
+    /** Makes a valid date relative to today for reservation checks. */
+    private static Date dateAfter(int days){
+        LocalDate date = LocalDate.now().plusDays(days);
+        return new Date(date.getYear(), date.getMonthValue(), date.getDayOfMonth());
     }
 
     /**
