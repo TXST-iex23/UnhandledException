@@ -68,17 +68,29 @@ public abstract class Vehicle{
         history = new ArrayList<>();
     }
 
-    /** @return the inventory ID */
+    /** Returns this vehicle's inventory ID.
+     * @return the inventory ID
+     */
     public String getID(){ return assetNo; }
-    /** @return the model year */
+    /** Returns the model year.
+     * @return the model year
+     */
     public String getYear(){ return year; }
-    /** @return the manufacturer */
+    /** Returns the manufacturer.
+     * @return the manufacturer
+     */
     public String getMaker(){ return maker; }
-    /** @return the model name */
+    /** Returns the model name.
+     * @return the model name
+     */
     public String getModel(){ return model; }
-    /** @return the descriptive vehicle type */
+    /** Returns the descriptive vehicle type.
+     * @return the vehicle type
+     */
     public String getType(){ return vehicleType; }
-    /** @return the mileage */
+    /** Returns the recorded mileage.
+     * @return the mileage
+     */
     public int getMileage(){ return mileage; }
 
     /**
@@ -106,17 +118,29 @@ public abstract class Vehicle{
         return allHistory.toString();
     }
 
-    /** @param id the inventory ID to store */
+    /** Stores the inventory ID assigned by the rental location.
+     * @param id the inventory ID to store
+     */
     public void setID(String id){ assetNo = id; }
-    /** @param yr the model year to store */
+    /** Stores the model year.
+     * @param yr the model year to store
+     */
     public void setYear(String yr){ year = yr; }
-    /** @param mkr the manufacturer to store */
+    /** Stores the manufacturer name.
+     * @param mkr the manufacturer to store
+     */
     public void setMaker(String mkr){ maker = mkr; }
-    /** @param mdl the model name to store */
+    /** Stores the model name.
+     * @param mdl the model name to store
+     */
     public void setModel(String mdl){ model = mdl; }
-    /** @param vType the descriptive vehicle type to store */
+    /** Stores a descriptive vehicle type.
+     * @param vType the descriptive vehicle type to store
+     */
     public void setType(String vType){ vehicleType = vType; }
-    /** @param miles the mileage to store */
+    /** Stores the vehicle's mileage.
+     * @param miles the mileage to store
+     */
     public void setMileage(int miles){ mileage = miles; }
 
     /**

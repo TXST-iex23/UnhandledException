@@ -155,14 +155,18 @@ public class Date{
      */
     public int getDateCode() { return dateCode; }
 
-    /** @return today's local calendar date */
+    /** Creates a date from the computer's current local calendar date.
+     * @return today's local calendar date
+     */
     public static Date today(){
         LocalDate currentDate = LocalDate.now();
         return new Date(currentDate.getYear(), currentDate.getMonthValue(),
                         currentDate.getDayOfMonth());
     }
 
-    /** @return an independent copy of this date */
+    /** Makes an independent date object with the same year, month, and day.
+     * @return an independent copy of this date
+     */
     public Date copy(){ return new Date(year, month, day); }
 
     /**

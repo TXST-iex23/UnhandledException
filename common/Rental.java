@@ -8,8 +8,21 @@ import common.vehicles.Vehicle;
  * objects instead of copying their data.
  */
 public class Rental{
-    /** The possible stages in a rental or reservation's life. */
-    public enum Status{ RESERVED, ACTIVE, RETURNED, CANCELLED }
+    /** The possible stages in a rental or reservation's life.
+     * A reservation starts as {@link #RESERVED}, can become {@link #ACTIVE} on
+     * its pickup day, and then becomes {@link #RETURNED}; an unactivated
+     * reservation can instead become {@link #CANCELLED}.
+     */
+    public enum Status{
+        /** A future booking that has not been activated or cancelled. */
+        RESERVED,
+        /** A vehicle currently checked out to its renter. */
+        ACTIVE,
+        /** A rental that has been returned. */
+        RETURNED,
+        /** A reservation cancelled before pickup. */
+        CANCELLED
+    }
 
     /** The vehicle associated with this booking. */
     private Vehicle vehicle;
@@ -36,13 +49,24 @@ public class Rental{
         this(null, rentedVehicle, customer, Date.today(), rentalDuration, Status.ACTIVE);
     }
 
-    /** Creates a reservation; Inventory checks the requested date before calling this. */
+    /** Creates a pending reservation; Inventory checks the request before calling this.
+     * @param id the generated reservation ID
+     * @param reservedVehicle the vehicle being reserved
+     * @param customer the person making the reservation
+     * @param pickup the first day of the reservation period
+     * @param rentalDuration the number of occupied days
+     */
     Rental(String id, Vehicle reservedVehicle, Renter customer, Date pickup,
            int rentalDuration){
         this(id, reservedVehicle, customer, pickup, rentalDuration, Status.RESERVED);
     }
 
-    /** Creates an immediate rental using the pickup date already checked by Inventory. */
+    /** Creates an active rental using a pickup date already checked by Inventory.
+     * @param rentedVehicle the vehicle being rented
+     * @param customer the person renting the vehicle
+     * @param pickup the rental start date
+     * @param rentalDuration the number of occupied days
+     */
     Rental(Vehicle rentedVehicle, Renter customer, Date pickup, int rentalDuration){
         this(null, rentedVehicle, customer, pickup, rentalDuration, Status.ACTIVE);
     }
@@ -72,34 +96,52 @@ public class Rental{
         status = startingStatus;
     }
 
-    /** @return the vehicle associated with this booking */
+    /** Returns the vehicle associated with this booking.
+     * @return the vehicle associated with this booking
+     */
     public Vehicle getVehicle(){ return vehicle; }
 
-    /** @return the customer associated with this booking */
+    /** Returns the customer associated with this booking.
+     * @return the customer associated with this booking
+     */
     public Renter getRenter(){ return renter; }
 
-    /** @return the agreed rental length in days */
+    /** Returns the agreed rental length.
+     * @return the duration in days
+     */
     public int getDuration(){ return duration; }
 
-    /** @return the reservation ID, or {@code null} for an immediate rental */
+    /** Returns the reservation ID assigned to a future booking.
+     * @return the reservation ID, or {@code null} for an immediate rental
+     */
     public String getReservationID(){ return reservationID; }
 
-    /** @return an independent copy of the pickup date */
+    /** Returns a copy so callers cannot change the stored pickup date.
+     * @return an independent copy of the pickup date
+     */
     public Date getPickupDate(){ return pickupDate.copy(); }
 
-    /** @return the last occupied day, including the pickup day */
+    /** Calculates the final occupied day, counting pickup as the first day.
+     * @return the day code of the last occupied day
+     */
     public long getEndDayCode(){ return (long)pickupDate.getDateCode() + duration - 1; }
 
-    /** @return {@code true} while the booking is an active rental */
+    /** Checks whether the booking is currently an active rental.
+     * @return {@code true} while the booking is active
+     */
     public boolean isActive(){ return status == Status.ACTIVE; }
 
-    /** @return the lifecycle status as a readable word */
+    /** Returns the lifecycle status with its first letter capitalized.
+     * @return the lifecycle status as a readable word
+     */
     public String getStatus(){
         String stateName = status.name().toLowerCase();
         return Character.toUpperCase(stateName.charAt(0)) + stateName.substring(1);
     }
 
-    /** @return the lifecycle state used by Inventory to check allowed operations */
+    /** Returns the lifecycle state used to decide which operations are allowed.
+     * @return the current lifecycle state
+     */
     public Status getLifecycleState(){ return status; }
 
     /**

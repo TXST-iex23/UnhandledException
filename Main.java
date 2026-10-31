@@ -4,9 +4,9 @@ import common.vehicles.Motorcycle;
 import console.ConsoleUI;
 
 /**
- * Starts the vehicle rental program and prepares its sample inventory.
- * The console interface is created here, while rental rules remain in the
- * application classes such as {@code Inventory} and {@code Rental}.
+ * Provides the entry point that prepares sample vehicles and starts the
+ * console interface. Rental rules remain in application classes such as
+ * {@code Inventory} and {@code Rental}.
  */
 public class Main{
     /**
