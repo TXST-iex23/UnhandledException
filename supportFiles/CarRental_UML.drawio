@@ -1,27 +1,98 @@
-<mxfile host="app.diagrams.net" modified="2026-10-30T00:00:00.000Z" agent="Codex" version="24.7.17" type="device">
+<mxfile host="app.diagrams.net" agent="Codex">
   <diagram id="vehicle-rental-system" name="Vehicle Rental System">
-    <mxGraphModel dx="1500" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+    <mxGraphModel dx="1558" dy="1150" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" background="light-dark(#FFFFFF,#FFFFFF)" math="0" shadow="0">
       <root>
-        <mxCell id="0"/><mxCell id="1" parent="0"/>
-        <mxCell id="Main" value="&lt;b&gt;Main&lt;/b&gt;&lt;hr&gt;+ main(args): void" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;" vertex="1" parent="1"><mxGeometry x="40" y="60" width="220" height="90" as="geometry"/></mxCell>
-        <mxCell id="ConsoleUI" value="&lt;b&gt;ConsoleUI&lt;/b&gt;&lt;hr&gt;- inventory: Inventory&lt;br&gt;- input: Scanner&lt;hr&gt;+ run(): void&lt;br&gt;- toolsMenu(): boolean&lt;br&gt;- reservationMenu(): boolean&lt;br&gt;- adminMenu(): void&lt;br&gt;- createReservationPrompt(): boolean&lt;br&gt;- showVehicleHistory(): void" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;" vertex="1" parent="1"><mxGeometry x="340" y="60" width="340" height="230" as="geometry"/></mxCell>
-        <mxCell id="Inventory" value="&lt;b&gt;Inventory&lt;/b&gt;&lt;hr&gt;- agencyLocation: String&lt;br&gt;- lotStock: ArrayList&lt;Vehicle&gt;&lt;br&gt;- rentals: ArrayList&lt;Rental&gt;&lt;br&gt;- nextReservationNumber: int&lt;br&gt;- currentDate: Date&lt;hr&gt;+ addVehicle(vehicle): void&lt;br&gt;+ getAvailableVehicles(): ArrayList&lt;br&gt;+ getAvailableVehicles(date, days): ArrayList&lt;br&gt;+ getActiveRentals(): ArrayList&lt;br&gt;+ getReservations(): ArrayList&lt;br&gt;+ isAvailable(id): boolean&lt;br&gt;+ isAvailableForPeriod(id, date, days): boolean&lt;br&gt;+ reserveVehicle(id, renter, date, days): Rental&lt;br&gt;+ cancelReservation(id): boolean&lt;br&gt;+ activateReservation(id): Rental&lt;br&gt;+ rentVehicle(vehicle, renter, days): Rental&lt;br&gt;+ returnVehicle(id): Rental&lt;br&gt;+ removeVehicle(id): void&lt;br&gt;+ getLotName(): String&lt;br&gt;+ CurrentDateString(): String" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;" vertex="1" parent="1"><mxGeometry x="760" y="60" width="370" height="430" as="geometry"/></mxCell>
-        <mxCell id="Rental" value="&lt;b&gt;Rental&lt;/b&gt;&lt;br&gt;&lt;i&gt;Status: RESERVED, ACTIVE, RETURNED, CANCELLED&lt;/i&gt;&lt;hr&gt;- vehicle: Vehicle&lt;br&gt;- renter: Renter&lt;br&gt;- reservationID: String&lt;br&gt;- pickupDate: Date&lt;br&gt;- duration: int&lt;br&gt;- status: Status&lt;hr&gt;+ activate(): boolean&lt;br&gt;+ cancel(): boolean&lt;br&gt;+ markReturned(): void&lt;br&gt;+ getTotalCharge(): double" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;" vertex="1" parent="1"><mxGeometry x="760" y="510" width="370" height="250" as="geometry"/></mxCell>
-        <mxCell id="Date" value="&lt;b&gt;Date&lt;/b&gt;&lt;hr&gt;- year, month, day: int&lt;br&gt;- dateCode: int&lt;hr&gt;+ Date(year, month, day)&lt;br&gt;+ getDate(): String&lt;br&gt;+ getDateString(): String&lt;br&gt;+ getDateCode(): int&lt;br&gt;+ today(): Date {static}" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;" vertex="1" parent="1"><mxGeometry x="1210" y="60" width="300" height="230" as="geometry"/></mxCell>
-        <mxCell id="Renter" value="&lt;b&gt;Renter&lt;/b&gt;&lt;hr&gt;- fName, lName: String&lt;hr&gt;+ Renter(first, last)&lt;br&gt;+ getName(): String" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;" vertex="1" parent="1"><mxGeometry x="1210" y="370" width="300" height="130" as="geometry"/></mxCell>
-        <mxCell id="Vehicle" value="&lt;&lt;abstract&gt;&gt;&lt;br&gt;&lt;b&gt;Vehicle&lt;/b&gt;&lt;hr&gt;- assetNo: String&lt;br&gt;- year, maker, model: String&lt;br&gt;- vehicleType: String&lt;br&gt;- history: ArrayList&lt;String&gt;&lt;hr&gt;+ setID(): void {generated}&lt;br&gt;+ setID(id): void&lt;br&gt;+ record(message): void&lt;br&gt;+ calculateRentalCost(days): double {abstract}" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;" vertex="1" parent="1"><mxGeometry x="340" y="510" width="340" height="220" as="geometry"/></mxCell>
-        <mxCell id="Car" value="&lt;b&gt;Car&lt;/b&gt;&lt;hr&gt;+ calculateRentalCost(days): double ($50/day)" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;" vertex="1" parent="1"><mxGeometry x="300" y="820" width="220" height="90" as="geometry"/></mxCell>
-        <mxCell id="Motorcycle" value="&lt;b&gt;Motorcycle&lt;/b&gt;&lt;hr&gt;+ calculateRentalCost(days): double ($35/day)" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;" vertex="1" parent="1"><mxGeometry x="550" y="820" width="260" height="90" as="geometry"/></mxCell>
-        <mxCell id="e1" value="starts" style="endArrow=block;html=1;" edge="1" parent="1" source="Main" target="ConsoleUI"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="e10" value="creates" style="endArrow=block;html=1;" edge="1" parent="1" source="Main" target="Inventory"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="e2" value="uses" style="endArrow=open;html=1;" edge="1" parent="1" source="ConsoleUI" target="Inventory"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="e3" value="stores 0..*" style="endArrow=diamond;endFill=1;html=1;" edge="1" parent="1" source="Inventory" target="Vehicle"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="e4" value="keeps 0..*" style="endArrow=diamond;endFill=1;html=1;" edge="1" parent="1" source="Inventory" target="Rental"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="e5" value="books 1" style="endArrow=open;html=1;" edge="1" parent="1" source="Rental" target="Vehicle"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="e6" value="for 1" style="endArrow=open;html=1;" edge="1" parent="1" source="Rental" target="Renter"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="e7" value="pickup date" style="endArrow=open;html=1;" edge="1" parent="1" source="Rental" target="Date"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="e8" value="extends" style="endArrow=block;endFill=0;html=1;" edge="1" parent="1" source="Car" target="Vehicle"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="e9" value="extends" style="endArrow=block;endFill=0;html=1;" edge="1" parent="1" source="Motorcycle" target="Vehicle"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="Main" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;" value="&lt;b&gt;Main&lt;/b&gt;&lt;hr&gt;+ main(args): void" vertex="1">
+          <mxGeometry height="90" width="220" x="40" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="ConsoleUI" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;" value="&lt;b&gt;ConsoleUI&lt;/b&gt;&lt;hr&gt;- inventory: Inventory&lt;br&gt;- input: Scanner&lt;hr&gt;+ run(): void&lt;br&gt;- toolsMenu(): boolean&lt;br&gt;- reservationMenu(): boolean&lt;br&gt;- adminMenu(): void&lt;br&gt;- createReservationPrompt(): boolean&lt;br&gt;- showVehicleHistory(): void" vertex="1">
+          <mxGeometry height="230" width="340" x="340" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Inventory" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;" value="&lt;b&gt;Inventory&lt;/b&gt;&lt;hr&gt;- agencyLocation: String&lt;br&gt;- lotStock: ArrayList&lt;Vehicle&gt;&lt;br&gt;- rentals: ArrayList&lt;Rental&gt;&lt;br&gt;- nextReservationNumber: int&lt;br&gt;- currentDate: Date&lt;hr&gt;+ addVehicle(vehicle): void&lt;br&gt;+ getAvailableVehicles(): ArrayList&lt;br&gt;+ getAvailableVehicles(date, days): ArrayList&lt;br&gt;+ getActiveRentals(): ArrayList&lt;br&gt;+ getReservations(): ArrayList&lt;br&gt;+ isAvailable(id): boolean&lt;br&gt;+ isAvailableForPeriod(id, date, days): boolean&lt;br&gt;+ reserveVehicle(id, renter, date, days): Rental&lt;br&gt;+ cancelReservation(id): boolean&lt;br&gt;+ activateReservation(id): Rental&lt;br&gt;+ rentVehicle(vehicle, renter, days): Rental&lt;br&gt;+ returnVehicle(id): Rental&lt;br&gt;+ removeVehicle(id): void&lt;br&gt;+ getLotName(): String&lt;br&gt;+ CurrentDateString(): String" vertex="1">
+          <mxGeometry height="430" width="370" x="760" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Rental" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;" value="&lt;b&gt;Rental&lt;/b&gt;&lt;br&gt;&lt;i&gt;Status: RESERVED, ACTIVE, RETURNED, CANCELLED&lt;/i&gt;&lt;hr&gt;- vehicle: Vehicle&lt;br&gt;- renter: Renter&lt;br&gt;- reservationID: String&lt;br&gt;- pickupDate: Date&lt;br&gt;- duration: int&lt;br&gt;- status: Status&lt;hr&gt;+ activate(): boolean&lt;br&gt;+ cancel(): boolean&lt;br&gt;+ markReturned(): void&lt;br&gt;+ getTotalCharge(): double" vertex="1">
+          <mxGeometry height="250" width="370" x="760" y="510" as="geometry" />
+        </mxCell>
+        <mxCell id="Date" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;" value="&lt;b&gt;Date&lt;/b&gt;&lt;hr&gt;- year, month, day: int&lt;br&gt;- dateCode: int&lt;hr&gt;+ Date(year, month, day)&lt;br&gt;+ getDate(): String&lt;br&gt;+ getDateString(): String&lt;br&gt;+ getDateCode(): int&lt;br&gt;+ today(): Date {static}" vertex="1">
+          <mxGeometry height="230" width="300" x="1210" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Renter" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;" value="&lt;b&gt;Renter&lt;/b&gt;&lt;hr&gt;- fName, lName: String&lt;hr&gt;+ Renter(first, last)&lt;br&gt;+ getName(): String" vertex="1">
+          <mxGeometry height="130" width="300" x="1210" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="Vehicle" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;" value="&lt;&lt;abstract&gt;&gt;&lt;br&gt;&lt;b&gt;Vehicle&lt;/b&gt;&lt;hr&gt;- assetNo: String&lt;br&gt;- year, maker, model: String&lt;br&gt;- vehicleType: String&lt;br&gt;- history: ArrayList&lt;String&gt;&lt;hr&gt;+ setID(): void {generated}&lt;br&gt;+ setID(id): void&lt;br&gt;+ record(message): void&lt;br&gt;+ calculateRentalCost(days): double {abstract}" vertex="1">
+          <mxGeometry height="220" width="340" x="340" y="510" as="geometry" />
+        </mxCell>
+        <mxCell id="Car" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;" value="&lt;b&gt;Car&lt;/b&gt;&lt;hr&gt;+ calculateRentalCost(days): double ($50/day)" vertex="1">
+          <mxGeometry height="90" width="220" x="300" y="820" as="geometry" />
+        </mxCell>
+        <mxCell id="Motorcycle" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;" value="&lt;b&gt;Motorcycle&lt;/b&gt;&lt;hr&gt;+ calculateRentalCost(days): double ($35/day)" vertex="1">
+          <mxGeometry height="90" width="260" x="550" y="820" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="Main" style="endArrow=block;html=1;" target="ConsoleUI" value="passes Inventory to">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" edge="1" parent="1" source="Main" style="endArrow=block;html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;" target="Inventory" value="creates Inventory">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="280" y="320" />
+              <mxPoint x="720" y="320" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="ConsoleUI" style="endArrow=open;html=1;" target="Inventory" value="uses">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="Inventory" style="endArrow=diamond;endFill=1;html=1;" target="Vehicle" value="stores 0..*">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="Inventory" style="endArrow=diamond;endFill=1;html=1;" target="Rental" value="keeps 0..*">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="Rental" style="endArrow=open;html=1;" target="Vehicle" value="books 1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="Rental" style="endArrow=open;html=1;" target="Renter" value="for 1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="Rental" style="endArrow=open;html=1;" target="Date" value="pickup date">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="Car" style="endArrow=block;endFill=0;html=1;" target="Vehicle" value="extends">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="Motorcycle" style="endArrow=block;endFill=0;html=1;" target="Vehicle" value="extends">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pkg-default" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=13;fontStyle=2;align=left;verticalAlign=middle;spacingLeft=5;" value="default" vertex="1">
+          <mxGeometry height="22" width="90" x="40" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="pkg-console" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=13;fontStyle=2;align=left;verticalAlign=middle;spacingLeft=5;" value="console" vertex="1">
+          <mxGeometry height="22" width="90" x="340" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="pkg-inventory" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=13;fontStyle=2;align=left;verticalAlign=middle;spacingLeft=5;" value="common" vertex="1">
+          <mxGeometry height="22" width="90" x="760" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="pkg-date" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=13;fontStyle=2;align=left;verticalAlign=middle;spacingLeft=5;" value="common" vertex="1">
+          <mxGeometry height="22" width="90" x="1210" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="pkg-rental" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=13;fontStyle=2;align=left;verticalAlign=middle;spacingLeft=5;" value="common" vertex="1">
+          <mxGeometry height="22" width="90" x="760" y="484" as="geometry" />
+        </mxCell>
+        <mxCell id="pkg-renter" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=13;fontStyle=2;align=left;verticalAlign=middle;spacingLeft=5;" value="common" vertex="1">
+          <mxGeometry height="22" width="90" x="1210" y="344" as="geometry" />
+        </mxCell>
+        <mxCell id="pkg-vehicle" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=13;fontStyle=2;align=left;verticalAlign=middle;spacingLeft=5;" value="common.vehicles" vertex="1">
+          <mxGeometry height="22" width="145" x="340" y="484" as="geometry" />
+        </mxCell>
+        <mxCell id="pkg-car" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=13;fontStyle=2;align=left;verticalAlign=middle;spacingLeft=5;" value="common.vehicles" vertex="1">
+          <mxGeometry height="22" width="145" x="300" y="794" as="geometry" />
+        </mxCell>
+        <mxCell id="pkg-motorcycle" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=13;fontStyle=2;align=left;verticalAlign=middle;spacingLeft=5;" value="common.vehicles" vertex="1">
+          <mxGeometry height="22" width="145" x="550" y="794" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
