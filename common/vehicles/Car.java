@@ -14,6 +14,7 @@ public class Car extends Vehicle{
      * @param yr the model year
      * @param mkr the manufacturer
      * @param mdl the model name
+     * @param vType the prefix used in the generated inventory ID
      */
     public Car(String yr, String mkr, String mdl, String vType){
         super(yr, mkr, mdl,vType);
@@ -25,6 +26,7 @@ public class Car extends Vehicle{
      * @param yr the model year
      * @param mkr the manufacturer
      * @param mdl the model name
+     * @param vType the prefix used in the generated inventory ID
      */
     public Car(int yr, String mkr, String mdl,String vType){
         super(yr, mkr, mdl,vType);

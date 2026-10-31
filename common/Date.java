@@ -155,18 +155,19 @@ public class Date{
      */
     public int getDateCode() { return dateCode; }
 
-    /**
-     * Produces a Date object to be used in duration/rental cost calculations.
-     *
-     * @return an instance of this Date class with the current date
+    /** Creates a date from the computer's current local calendar date.
+     * @return today's local calendar date
      */
-    public Date today() {
-        int yr = LocalDate.now().getYear();
-        int mo = LocalDate.now().getMonthValue();
-        int dy = LocalDate.now().getDayOfMonth();
-        this.setDate(yr, mo, dy);
-        return this;
+    public static Date today(){
+        LocalDate currentDate = LocalDate.now();
+        return new Date(currentDate.getYear(), currentDate.getMonthValue(),
+                        currentDate.getDayOfMonth());
     }
+
+    /** Makes an independent date object with the same year, month, and day.
+     * @return an independent copy of this date
+     */
+    public Date copy(){ return new Date(year, month, day); }
 
     /**
      * Uses the readable date form when this object is printed.

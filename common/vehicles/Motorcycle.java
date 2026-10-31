@@ -14,6 +14,7 @@ public class Motorcycle extends Vehicle{
      * @param yr the model year
      * @param mkr the manufacturer
      * @param mdl the model name
+     * @param vehicleType the prefix used in the generated inventory ID
      */
     public Motorcycle(String yr, String mkr, String mdl,String vehicleType){
         super(yr, mkr, mdl,vehicleType);
@@ -25,6 +26,7 @@ public class Motorcycle extends Vehicle{
      * @param yr the model year
      * @param mkr the manufacturer
      * @param mdl the model name
+     * @param vehicleType the prefix used in the generated inventory ID
      */
     public Motorcycle(int yr, String mkr, String mdl, String vehicleType){
         super(yr, mkr, mdl,vehicleType);

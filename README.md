@@ -1,50 +1,60 @@
-# Group: UnhandledException
-Group project for CS 3354.R04 at Texas State University
+# Vehicle Rental System
 
-<div align="center"><img src="./supportFiles/Assignment.png" alt="assignment" width=75% /></div>
+<div align="center"><img src="./supportFiles/Assignment.png" alt="assignment" width="75%" /></div>
 
 ## Purpose
-The purpose of this application is to simulate the software systems commonly used by vehicle rental agencies. The application enables users to review an agency's current and projected vehicle inventory to determine which vehicles are available or expected to become available. This information allows customers to make reservations for future vehicle pickup dates based on inventory availability.
 
-## Java version
+This Java console application models a small vehicle rental location. Users can browse available vehicles, rent and return vehicles, inspect active rentals, reserve vehicles for future dates, and use administrator options to add or remove vehicles and review vehicle history.
 
-Programmed with java version "26.0.2.1" 2026-08-18.
-and java version "27" 2026-09-15
+## Java version and entry point
 
-## Software Operation Instructions
+The source uses `java.time.LocalDate` and requires Java 8 or later. `Main.java` creates the sample inventory and starts `console.ConsoleUI`.
 
-To run this application, ensure that Java 26 or later is installed on your system. You can verify your installed Java version by opening a command prompt, terminal, or shell and entering the following command:
+## Setup, compile, run, and validate
 
-`java -version`
+From the project root, compile the application and validation driver:
 
-
-A valid installation should produce output similar to the following:
-
-```
-java version "27" 2026-09-15
-Java(TM) SE Runtime Environment (build 27+35-2325)
-Java HotSpot(TM) 64-Bit Server VM (build 27+35-2325, mixed mode, sharing)
+```powershell
+New-Item -ItemType Directory -Force out | Out-Null
+javac -d out Main.java common\*.java common\vehicles\*.java console\*.java tests\*.java
 ```
 
+Run the application:
 
-Once Java has been verified, navigate to the root directory of the application. This directory should contain the file "Main.java".
+```powershell
+java -cp out Main
+```
 
-The Main.java file serves as the primary application driver and entry point for the program. To launch the application, execute the following command from the root directory:
+Run the dependency-free validation driver:
 
-`java Main`
+```powershell
+java -cp out tests.VehicleRentalValidationTest
+```
 
-After the application starts, follow the on-screen prompts and instructions to interact with the software.
+## Features
 
-# Demonstration
-<img src="./supportFiles/example.png" alt="example" width=70%/>
+- Sample inventory of cars and a motorcycle with generated, type-prefixed vehicle IDs.
+- Immediate rentals, active rental display, subclass-specific pricing, and returns.
+- A reservation workflow to create, view, cancel, and activate reservations on their pickup date.
+- Reservation dates use `MM/DD/YYYY`; dates in the past are rejected. Inventory checks the full inclusive reservation period for conflicts.
+- Administrator actions to add cars or motorcycles, remove vehicles without active rentals or pending reservations, and view vehicle history.
+- Vehicle history records inventory, reservation, pickup, rental, return, and removal events with dates.
 
-## Features and Limitations
-+ Calculates final price of rental.
-+ Does not account for mileage and fuel refills.
-+ Does not yet use dates to calculate rental cost.
-+ 
-+ Demonstration only. No changes are saved when exiting software; 
+## Limitations
 
-### Team Members
-+ Jaime Martinez    -- ai declaration: TBD
-+ Brandon Crenshaw  -- ai declaration: Used only to formalize the language use in this readme file.
+- Inventory, rental, and reservation records exist only while the program is running.
+- Payment processing, customer accounts, and persistent customer records are not implemented.
+- This is a console demonstration, not a production rental service.
+
+## Console workflows
+
+Choose **5. Reservations and administrator options** from the main menu. The next menu opens either the reservation workflow or administrator options. The main menu's option 6 exits the application.
+
+For a reservation, choose the pickup date, duration, one of the vehicles available for that entire period, and renter names. The application assigns a reservation ID. Pending reservations can be viewed or cancelled; activation is available on the pickup date. After activation, return the vehicle from the main menu using its vehicle ID.
+
+The administrator menu can add a car or motorcycle, remove a vehicle only when it has no active rental or pending reservation, and display a vehicle's history by ID.
+
+## Team
+
+- Jaime Martinez
+- Brandon Crenshaw
