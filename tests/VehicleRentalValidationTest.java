@@ -7,6 +7,7 @@ import common.Inventory;
 import common.Renter;
 import common.Rental;
 import common.vehicles.Car;
+import common.vehicles.Motorcycle;
 import common.vehicles.Vehicle;
 
 /**
@@ -50,6 +51,16 @@ public class VehicleRentalValidationTest{
               "empty vehicle history is safe to read");
 
         Renter renter = new Renter("Jamie", "Student");
+        Vehicle carVehicle = car;
+        Vehicle motorcycle = new Motorcycle(2024, "Honda", "Rebel");
+        inventory.addVehicle(motorcycle, "M0001");
+        check(carVehicle.calculateRentalCost(2) != motorcycle.calculateRentalCost(2),
+              "car and motorcycle use different pricing overrides through Vehicle methods");
+        Rental motorcycleRental = inventory.rentVehicle(motorcycle, renter, 2);
+        check(motorcycleRental != null && motorcycleRental.getTotalCharge() == 70.0,
+              "motorcycle rental charge uses its $35 daily rate through a Vehicle reference");
+        inventory.returnVehicle("M0001");
+
         check(inventory.rentVehicle(car, renter, 0) == null,
               "zero-day rental is rejected");
         check(inventory.rentVehicle(car, renter, -1) == null,
