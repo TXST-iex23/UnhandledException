@@ -151,21 +151,36 @@ public class Rental{
      */
     public double getTotalCharge(){ return vehicle.calculateRentalCost(duration); }
 
-    /** Changes a pending reservation into an active rental. */
+    /**
+     * Changes a pending reservation into an active rental.
+     *
+     * @return {@code true} if the reservation changed to active; {@code false}
+     *         if it was not pending
+     */
     boolean activate(){
         if(status != Status.RESERVED){ return false; }
         status = Status.ACTIVE;
         return true;
     }
 
-    /** Cancels a pending reservation, leaving all other states unchanged. */
+    /**
+     * Cancels a pending reservation, leaving all other states unchanged.
+     *
+     * @return {@code true} if the reservation changed to cancelled;
+     *         {@code false} if it was not pending
+     */
     boolean cancel(){
         if(status != Status.RESERVED){ return false; }
         status = Status.CANCELLED;
         return true;
     }
 
-    /** Marks an active rental returned; Inventory calls this while processing a return. */
+    /**
+     * Marks an active rental returned; Inventory calls this while processing a return.
+     *
+     * @return {@code true} if the rental changed to returned; {@code false}
+     *         if it was not active
+     */
     boolean markReturned(){
         if(status != Status.ACTIVE){ return false; }
         status = Status.RETURNED;

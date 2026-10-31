@@ -8,7 +8,7 @@ This beginner-level Java program models a small vehicle rental location. A custo
 
 ## Java version and entry point
 
-The application was compiled and its validation driver was run with the VS Code Java extension's bundled JDK 25. The entry point is `Main.java` (`Main.main`). It creates the sample inventory and starts `console.ConsoleUI`.
+The source uses `java.time.LocalDate`, introduced in Java 8, so the source API minimum is Java 8. A JDK 25 `javac --release 8` check generated the class files but ended with a compiler resource-close error, so a clean Java 8 release build is not confirmed. Verification was performed with JDK 25.0.4.1 bundled with the VS Code Java extension. The entry point is `Main.java` (`Main.main`). It creates the sample inventory and starts `console.ConsoleUI`.
 
 ## Setup, compile, run, and validate
 
@@ -31,7 +31,7 @@ Run the dependency-free validation driver:
 java -cp out tests.VehicleRentalValidationTest
 ```
 
-The driver checks rental, return, pricing, date, input, and reservation behavior. The current committed validation driver has reported 67 passing checks.
+The driver checks rental, return, pricing, date, input, and reservation behavior. The current validation driver reports 69 passing checks.
 
 ## Implemented features
 

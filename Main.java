@@ -9,6 +9,9 @@ import console.ConsoleUI;
  * {@code Inventory} and {@code Rental}.
  */
 public class Main{
+    /** Prevents creating an instance of this static entry-point class. */
+    private Main(){ }
+
     /**
      * Builds the starting inventory and launches the console menu.
      *
