@@ -5,15 +5,19 @@ package common.vehicles;
  * It inherits common vehicle data and overrides the pricing behavior.
  */
 public class Motorcycle extends Vehicle{
+    /* Signifies a car via the identifier */
+    private String vehicleType = "M";
+
     /**
      * Creates a motorcycle from a text model year, manufacturer, and model.
      *
      * @param yr the model year
      * @param mkr the manufacturer
      * @param mdl the model name
+     * @param vehicleType the prefix used in the generated inventory ID
      */
-    public Motorcycle(String yr, String mkr, String mdl){
-        super(yr, mkr, mdl);
+    public Motorcycle(String yr, String mkr, String mdl,String vehicleType){
+        super(yr, mkr, mdl,vehicleType);
     }
 
     /**
@@ -22,14 +26,18 @@ public class Motorcycle extends Vehicle{
      * @param yr the model year
      * @param mkr the manufacturer
      * @param mdl the model name
+     * @param vehicleType the prefix used in the generated inventory ID
      */
-    public Motorcycle(int yr, String mkr, String mdl){
-        super(yr, mkr, mdl);
+    public Motorcycle(int yr, String mkr, String mdl, String vehicleType){
+        super(yr, mkr, mdl,vehicleType);
     }
 
     /** Creates a motorcycle with the superclass's placeholder values. */
     public Motorcycle(){
         super();
+        String temp = super.getID();
+        temp = vehicleType + temp.substring(1);
+        super.setID(temp);
     }
 
     /**

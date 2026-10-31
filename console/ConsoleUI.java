@@ -7,6 +7,8 @@ import common.Date;
 import common.Inventory;
 import common.Renter;
 import common.Rental;
+import common.vehicles.Car;
+import common.vehicles.Motorcycle;
 import common.vehicles.Vehicle;
 
 /**
@@ -38,12 +40,13 @@ public class ConsoleUI{
         boolean running = true;
         // The loop keeps the menu available after each completed operation.
         while(running){
-            System.out.println("\n\nVehicle Rental System\n");
+            System.out.println("\nVehicle Rental System: "+ inventory.CurrentDateString());
+            System.out.println("Lot: "+ inventory.getLotName() +"\n");
             System.out.println("1. View available vehicles");
             System.out.println("2. Rent a vehicle");
             System.out.println("3. Return a vehicle");
             System.out.println("4. View active rentals");
-            System.out.println("5. Reservations");
+            System.out.println("5. Reservations and administrator options");
             System.out.println("6. Exit");
 
             Integer choice = readInteger("Choose an option: ");
@@ -66,7 +69,7 @@ public class ConsoleUI{
                     showActiveRentals();
                     break;
                 case 5:
-                    running = reservationMenu();
+                    running = toolsMenu();
                     break;
                 case 6:
                     running = false;
@@ -360,6 +363,22 @@ public class ConsoleUI{
         return null;
     }
 
+    /** Displays a vehicles history. */
+    private void showVehicleHistory() {
+        String identifier = readRequiredText("Enter the vehicle ID to assess: ");
+        if(identifier == null){ return; }
+        Vehicle vehicle = inventory.findVehicle(identifier);
+        if(vehicle == null){
+            System.out.println("\nThat vehicle ID was not found.");
+            return;
+        }
+        else{
+            System.out.println("\n" + identifier + "'s Vehicle History:");
+            System.out.println(vehicle.getAllHistory());
+            return;
+        }
+    }
+
     /**
      * Reads and parses an integer, prompting again when the input is not numeric.
      *
@@ -419,5 +438,113 @@ public class ConsoleUI{
         System.out.print(prompt);
         if(!input.hasNextLine()){ return null; }
         return input.nextLine();
+    }
+
+    /** Asks Inventory to complete the active rental for a vehicle ID. */
+    private void adminMenu(){
+        boolean runMenu2 = true;
+        // The loop keeps the menu available after each completed operation.
+        while(runMenu2){
+            System.out.println("\n*** Administrator Menu ***");
+            System.out.println("Lot: "+ inventory.getLotName() +"\n");
+            System.out.println("1. Add a vehicle");
+            System.out.println("2. Remove a vehicle");
+            System.out.println("3. View vehicle history");
+            System.out.println("4. Return to previous menu.");
+
+            Integer choice = readInteger("Choose an option: ");
+            if(choice == null){ break; }
+
+            switch(choice){
+                case 1:
+                    addVehiclePrompt();
+                    break;
+                case 2:
+                    removeVehiclePrompt();
+                    break;
+                case 3:
+                    showVehicleHistory();
+                    break;
+                case 4:
+                    runMenu2 = false;
+                    break;
+                default:
+                    System.out.println("Please choose a number from 1 to 4.");
+            }
+        }
+    }
+
+    private void addVehiclePrompt(){
+        String vType;
+        Integer choice = readInteger("Is the new vehicle a Car (1) or motorcycle (2)? ");
+        if(choice == null){ return; }
+        if(choice == 1){vType = "C";}
+        else if(choice == 2){vType = "M";}
+        else { return; }
+
+        String maker = readLine("Enter the new vehicle's maker: ");
+        if(maker == null){ return; }
+
+        String model = readLine("Enter the model of the vehicle: ");
+        if(model == null){ return; }
+
+        String year = readLine("Now enter the year of the vehicle: ");
+        if(year == null){ return; }
+
+        Vehicle vehicle = choice == 1 ? new Car(year, maker, model, vType) :
+                                       new Motorcycle(year, maker, model, vType);
+        inventory.addVehicle(vehicle);
+        System.out.println("The vehicle was added as " + vehicle.getID() + " into the system.");
+    }
+
+    private void removeVehiclePrompt(){
+        String id = readLine("Enter the ID of the vehicle to remove? ");
+        if(id == null){ return; }
+        Vehicle vehicle = inventory.findVehicle(id);
+        if(vehicle == null){
+            System.out.println("That vehicle ID was not found.");
+        } else if(!inventory.isAvailable(id)){
+            System.out.println("That vehicle cannot be removed while it has an active rental.");
+        } else if(hasPendingReservation(vehicle)){
+            System.out.println("That vehicle cannot be removed while it has a pending reservation.");
+        } else {
+            inventory.removeVehicle(id);
+            System.out.println(id + " was removed from the system.");
+        }
+    }
+
+    /** Checks whether a pending reservation depends on the vehicle. */
+    private boolean hasPendingReservation(Vehicle vehicle){
+        for(Rental reservation : inventory.getReservations()){
+            if(reservation.getVehicle() == vehicle){ return true; }
+        }
+        return false;
+    }
+
+    /** Lets the user open either the reservation or administrator workflow. */
+    private boolean toolsMenu(){
+        while(true){
+            System.out.println("\n*** Rental Management ***");
+            System.out.println("1. Reservations");
+            System.out.println("2. Administrator options");
+            System.out.println("3. Return to the main menu");
+            Integer choice = readInteger("Choose an option: ");
+            if(choice == null){
+                System.out.println("Input ended. Goodbye.");
+                return false;
+            }
+            switch(choice){
+                case 1:
+                    if(!reservationMenu()){ return false; }
+                    break;
+                case 2:
+                    adminMenu();
+                    break;
+                case 3:
+                    return true;
+                default:
+                    System.out.println("Please choose a number from 1 to 3.");
+            }
+        }
     }
 }

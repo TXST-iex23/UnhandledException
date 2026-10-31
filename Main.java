@@ -21,9 +21,9 @@ public class Main{
         // The vehicles are stored as a group by Inventory and can be handled
         // through their shared Vehicle superclass in the rest of the program.
         Inventory inventory = new Inventory("Main Office");
-        inventory.addVehicle(new Car(2022, "Toyota", "Camry"), "C0001");
-        inventory.addVehicle(new Car(2023, "Honda", "Civic"), "C0002");
-        inventory.addVehicle(new Motorcycle(2024, "Honda", "Rebel"), "M0001");
+        inventory.addVehicle(new Car(2022, "Toyota", "Camry","C"));
+        inventory.addVehicle(new Car(2023, "Honda", "Civic","C"));
+        inventory.addVehicle(new Motorcycle(2024, "Honda", "Rebel","M"));
 
         ConsoleUI console = new ConsoleUI(inventory);
         console.run();

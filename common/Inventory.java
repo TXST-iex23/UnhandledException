@@ -16,6 +16,8 @@ public class Inventory{
     private ArrayList<Rental> rentals = new ArrayList<>();
     /** Number used to assign the next reservation ID. */
     private int nextReservationNumber = 1;
+    /** The Date object with the current date */
+    private Date currentDate = Date.today();
 
     /** Creates an inventory with the default location name. */
     public Inventory() { agencyLocation = "Original Lot"; }
@@ -47,20 +49,19 @@ public class Inventory{
 
     /**
      * Adds a vehicle and records the addition in its history.
-     * Blank IDs, duplicate IDs, duplicate vehicle objects, and null vehicles
-     * are ignored so the inventory stays consistent.
+     * Duplicate IDs, duplicate vehicle objects, and null vehicles are ignored
+     * so the inventory stays consistent.
      *
      * @param asset the vehicle to add
-     * @param identifier the unique ID to assign to the vehicle
      */
-    public void addVehicle(Vehicle asset, String identifier){
+    public void addVehicle(Vehicle asset){
         // Reject bad input before changing the vehicle or its history.
-        if(asset == null || identifier == null || identifier.trim().isEmpty()){ return; }
-        String vehicleID = identifier.trim();
+        if(asset == null){ return; }
+        String vehicleID = asset.getID();
         // A vehicle ID and vehicle object should each appear only once here.
         if(getIndexByID(vehicleID) >= 0 || findVehicleByObject(asset)){ return; }
         asset.setID(vehicleID);
-        asset.record(vehicleID + " was added to the inventory.");
+        asset.record(currentDate.getDate() + ": " + vehicleID + " was added to the inventory.");
         lotStock.add(asset);
     }
 
@@ -215,8 +216,8 @@ public class Inventory{
         Rental reservation = new Rental(reservationID, asset, renter, pickupDate, duration);
         rentals.add(reservation);
         nextReservationNumber++;
-        asset.record(reservationID + " was reserved for " + renter.getName() +
-            " starting " + pickupDate.getDateString() + ".");
+        asset.record(currentDate.getDate() + ": " + reservationID + " was reserved for " +
+            renter.getName() + " starting " + pickupDate.getDateString() + ".");
         return reservation;
     }
 
@@ -229,7 +230,8 @@ public class Inventory{
     public boolean cancelReservation(String reservationID){
         Rental reservation = findReservation(reservationID);
         if(reservation == null || !reservation.cancel()){ return false; }
-        reservation.getVehicle().record(reservation.getReservationID() + " was cancelled.");
+        reservation.getVehicle().record(currentDate.getDate() + ": " +
+            reservation.getReservationID() + " was cancelled.");
         return true;
     }
 
@@ -247,7 +249,8 @@ public class Inventory{
             return null;
         }
         if(!reservation.activate()){ return null; }
-        reservation.getVehicle().record(reservationID.trim() + " was picked up.");
+        reservation.getVehicle().record(currentDate.getDate() + ": " +
+            reservationID.trim() + " was picked up.");
         return reservation;
     }
 
@@ -293,8 +296,8 @@ public class Inventory{
         Rental rental = new Rental(asset, renter, pickupDate, duration);
         rentals.add(rental);
         // The vehicle stays in inventory; its active rental makes it unavailable.
-        asset.record(asset.getID() + " was rented by " + renter.getName() +
-                     " for " + duration + " days.");
+        asset.record(currentDate.getDate() + ": " + asset.getID() + " was rented by " +
+            renter.getName() + " for " + duration + " days.");
         return rental;
     }
 
@@ -313,8 +316,8 @@ public class Inventory{
         for(Rental rental : rentals){
             if(rental.isActive() && rental.getVehicle() == asset){
                 rental.markReturned();
-                asset.record(asset.getID() + " was returned by " +
-                             rental.getRenter().getName() + ".");
+                asset.record(currentDate.getDate() + ": " + asset.getID() +
+                    " was returned by " + rental.getRenter().getName() + ".");
                 return rental;
             }
         }
@@ -330,11 +333,37 @@ public class Inventory{
     public void removeVehicle(String identifier){
         int index = getIndexByID(identifier);
         // Keep the vehicle in the lot until its active rental has been returned.
-        if(index >= 0 && isAvailable(identifier)){
-            lotStock.get(index).record(identifier + " was removed from the inventory.");
+        if(index >= 0 && isAvailable(identifier) && !hasPendingReservation(lotStock.get(index))){
+            lotStock.get(index).record(currentDate.getDate() + ": " + identifier +
+                " was removed from the inventory.");
             lotStock.remove(index);
         }
     }
+
+    /** Checks whether a vehicle is referenced by a pending reservation. */
+    private boolean hasPendingReservation(Vehicle asset){
+        for(Rental rental : rentals){
+            if(rental.getVehicle() == asset &&
+               rental.getLifecycleState() == Rental.Status.RESERVED){ return true; }
+        }
+        return false;
+    }
+
+    /**
+     * Calculates the number of days between two dates using their day codes.
+     *
+     * @return String value of the current date
+     */
+    public String CurrentDateString(){
+        return String.valueOf(currentDate);
+    }
+
+    /**
+     * Returns the name of the rental lot.
+     *
+     * @return String value of the specific lot id
+     */
+    public String getLotName(){ return agencyLocation; }
 
     /**
      * Calculates the number of days between two dates using their day codes.
