@@ -8,14 +8,22 @@ public class Inventory{
     /** The human-readable location name for this inventory. */
     private String agencyLocation;
     /** Vehicles currently owned by this location. */
-    private ArrayList<Vehicle> lotStock = new ArrayList<>();
+    private ArrayList<Vehicle> lotStock;
     /** The Date object with the current date */
     private Date currentDate = Date.today();
 
 
     // CONSTRUCTORS ---------------------------------------------------------------------
     /** Creates an inventory with the default location name. */
-    public Inventory() { agencyLocation = "Unnamed Lot"; }
+    public Inventory() {
+        agencyLocation = "Unnamed Lot";
+        lotStock = new ArrayList<>();
+    }
+
+    public Inventory(String lotLocation, ArrayList<Vehicle> lotStock) {
+        agencyLocation = lotLocation;
+        this.lotStock = lotStock;
+    }
 
     /**
      * Creates an inventory for the supplied location.
@@ -23,6 +31,8 @@ public class Inventory{
      * @param lotLocation the name of the rental location
      */
     public Inventory(String lotLocation) { agencyLocation = lotLocation; }
+
+    public Inventory(ArrayList<Vehicle> lotStock) { this.lotStock = lotStock; }
 
 
     // PRIVATE METHODS ------------------------------------------------------------------
@@ -105,6 +115,20 @@ public class Inventory{
         }
     }
 
+    /**
+     * Returns the list of vehicles on the lot.
+     *
+     * @return ArrayList<Vehicle> the list of vehicles on the lot.
+     */
+    public ArrayList<Vehicle> list(){ return lotStock; }
+
+    /**
+     * Returns the list of vehicles on the lot.
+     *
+     * @return ArrayList<Vehicle> the list of vehicles on the lot.
+     */
+    public void importList(ArrayList<Vehicle> lotStock){ this.lotStock = lotStock; }
+
 
     /** Changes the name of the rental lot.
      *
@@ -118,7 +142,5 @@ public class Inventory{
      * @return String value of the specific lot id
      */
     public String getLotName(){ return agencyLocation; }
-
-
 
 }

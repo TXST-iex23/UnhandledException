@@ -6,6 +6,7 @@ import common.Date;
 import common.Inventory;
 import common.Renter;
 import common.Booking;
+import common.BookingManager;
 import common.vehicles.Car;
 import common.vehicles.Motorcycle;
 import common.vehicles.Vehicle;
@@ -17,6 +18,8 @@ import common.vehicles.Vehicle;
 public class VehicleRentalValidationTest{
     /** Number of checks completed successfully so far. */
     private static int checks = 0;
+
+
 
     /** Runs all validation checks and prints the number that succeeded.
      *
@@ -60,41 +63,43 @@ public class VehicleRentalValidationTest{
         String motorcycleID = motorcycle.getID();
         check(carVehicle.calculateRentalCost(2) != motorcycle.calculateRentalCost(2),
               "car and motorcycle use different pricing overrides through Vehicle methods");
-        Booking motorcycleRental = inventory.rentVehicle(motorcycle, renter, 2);
+        
+        BookingManager bkMgr = new BookingManager(inventory);
+        Booking motorcycleRental = bkMgr.rentVehicle(motorcycle, renter, 2);
         check(motorcycleRental != null && motorcycleRental.getTotalCharge() == 70.0,
               "motorcycle rental charge uses its $35 daily rate through a Vehicle reference");
-        inventory.returnVehicle(motorcycleID);
+        bkMgr.returnVehicle(motorcycleID);
 
-        check(inventory.rentVehicle(car, renter, 0) == null,
+        check(bkMgr.rentVehicle(car, renter, 0) == null,
               "zero-day rental is rejected");
-        check(inventory.rentVehicle(car, renter, -1) == null,
+        check(bkMgr.rentVehicle(car, renter, -1) == null,
               "negative-day rental is rejected");
-        check(inventory.rentVehicle(null, renter, 1) == null,
+        check(bkMgr.rentVehicle(null, renter, 1) == null,
               "null vehicle rental is rejected");
-        check(inventory.rentVehicle(car, null, 1) == null,
+        check(bkMgr.rentVehicle(car, null, 1) == null,
               "null renter rental is rejected");
-        check(inventory.returnVehicle(carID) == null,
+        check(bkMgr.returnVehicle(carID) == null,
               "return without an active rental is safe");
 
-        Booking rental = inventory.rentVehicle(car, renter, 2);
+        Booking rental = bkMgr.rentVehicle(car, renter, 2);
         // A two-day car rental uses the Car pricing override: $50 per day.
         check(rental != null, "valid rental succeeds");
         check(rental.getTotalCharge() == 100.0, "car rental charge is correct");
         check(!inventory.isAvailable(carID), "rented vehicle is unavailable");
-        check(inventory.rentVehicle(car, renter, 1) == null,
+        check(bkMgr.rentVehicle(car, renter, 1) == null,
               "vehicle with active rental cannot be rented again");
 
         inventory.removeVehicle(carID);
         // Removal is ignored while the vehicle is part of an active rental.
         check(inventory.findVehicle(carID) == car,
               "vehicle with active rental cannot be removed");
-        check(inventory.returnVehicle("UNKNOWN") == null,
+        check(bkMgr.returnVehicle("UNKNOWN") == null,
               "unknown vehicle return is safe");
 
-        Booking returnedRental = inventory.returnVehicle(carID);
+        Booking returnedRental = bkMgr.returnVehicle(carID);
         check(returnedRental == rental && !rental.isActive(),
               "active rental can be returned");
-        check(inventory.isAvailable(carID), "returned vehicle is available again");
+        check(bkMgr.isAvailable(carID), "returned vehicle is available again");
         check(car.getHistory().contains("was returned"), "return is recorded in history");
         inventory.removeVehicle(carID);
         check(inventory.findVehicle(carID) == null,
