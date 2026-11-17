@@ -1,4 +1,4 @@
-package common.vehicles;
+package common.feature.vehicles;
 
 import java.util.ArrayList;
 

@@ -1,7 +1,7 @@
-package common;
+package common.features;
 
+import common.features.vehicles.*;
 import java.util.ArrayList;
-import common.vehicles.*;
 
 /** Manages the vehicles at a rental location and keeps record of inventory changes. */
 public class Inventory{
