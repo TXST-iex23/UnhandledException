@@ -96,6 +96,23 @@ public class BookingManager {
     }
 
     // PUBLIC METHODS -------------------------------------------------------------------
+
+    // INVENTORY METHODS <><><><><><><><<><><><><><><><><><><><><><>
+    public Vehicle find(String identifier){ return inventory.findVehicle(identifier); }
+
+    public void add(Vehicle asset){ inventory.addVehicle(asset); }
+
+    public void remove(String identifier){ inventory.removeVehicle(identifier); }
+
+    public ArrayList<Vehicle> list(){ return  inventory.list(); }
+
+    public void importList(ArrayList<Vehicle> lotStock){ inventory.importList(lotStock); }
+
+    public String getLotName(String agencyLocation){ return inventory.getLotName(); }
+
+    public void setLotName(String agencyLocation){ inventory.setLotName(agencyLocation); }
+
+
     /**
      * Makes a new list of rentals that have not yet been returned.
      *
