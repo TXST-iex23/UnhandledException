@@ -7,29 +7,28 @@ import java.util.ArrayList;
  * Manages the vehicles at one rental location and keeps rental records.
  * This class contains application logic; the console menu is handled elsewhere.
  */
-public class Reserves{
+public class Reserve{
     /** Vehicles currently owned by this location. */
     private ArrayList<Vehicle> lotStock = new ArrayList<>();
     /** Current and completed rentals created by this inventory. */
-    private ArrayList<Rental> rentals;
+    private ArrayList<Booking> rentals;
     /** Number used to assign the next reservation ID. */
     private int nextReservationNumber = 1;
     /** The Date object with the current date */
     private Date currentDate = Date.today();
 
     /** Creates an inventory with the default location name. */
-    public Reserves() { rental = new ArrayList<>(); }
+    public Reserve() { rentals = new ArrayList<>(); }
 
     /**
      * Creates an inventory for the supplied location.
      *
      * @param lotLocation the name of the rental location
      */
-    public Reserves(ArrayList<Vehicle> lotStock) {
-        rental = new ArrayList<>();
+    public Reserve(ArrayList<Vehicle> lotStock) {
+        rentals = new ArrayList<>();
         this.lotStock = lotStock;
     }
-
 
 // PRIVATE METHODS -------------------------------------------------------------------------------
     /**
@@ -224,72 +223,6 @@ public class Reserves{
         reservation.getVehicle().record(currentDate.getDate() + ": " +
             reservationID.trim() + " was picked up.");
         return reservation;
-    }
-
-
-// PUBLIC METHODS (RENTAL) -------------------------------------------------------------------------
-    /**
-     * Makes a new list containing vehicles that are not currently rented.
-     * Changes to the returned list do not change the inventory itself.
-     *
-     * @return a list of currently available vehicles
-     */
-    public ArrayList<Vehicle> getAvailableVehicles(){
-        ArrayList<Vehicle> availableVehicles = new ArrayList<>();
-        // Check rental status for each vehicle rather than storing a second status flag.
-        for(Vehicle asset : lotStock){
-            if(isAvailable(asset.getID())){ availableVehicles.add(asset); }
-        }
-        return availableVehicles;
-    }
-
-    /**
-     * Completes the active rental for a vehicle and records its return.
-     *
-     * @param identifier the ID of the vehicle being returned
-     * @return the completed rental, or {@code null} if there is no active rental
-     */
-    public Rental returnVehicle(String identifier){
-        Vehicle asset = findVehicle(identifier);
-        // An unknown ID cannot have an active rental in this inventory.
-        if(asset == null){ return null; }
-
-        // Mark the existing rental complete instead of deleting its history.
-        for(Rental rental : rentals){
-            if(rental.isActive() && rental.getVehicle() == asset){
-                rental.markReturned();
-                asset.record(currentDate.getDate() + ": " + asset.getID() +
-                    " was returned by " + rental.getRenter().getName() + ".");
-                return rental;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Starts a rental when the vehicle is in this inventory and available.
-     * A successful rental is saved and written to the vehicle's history.
-     *
-     * @param asset the vehicle to rent
-     * @param renter the customer renting it
-     * @param duration the rental length in days; must be positive
-     * @return the new rental, or {@code null} if the request is invalid or unavailable
-     */
-    public Rental rentVehicle(Vehicle asset, Renter renter, int duration){
-        // Basic argument checks prevent invalid rentals from reaching Rental.
-        if(asset == null || renter == null || duration <= 0){ return null; }
-        String identifier = asset.getID();
-        // Identity comparison ensures this is the actual inventory vehicle, not a copy.
-        Date pickupDate = Date.today();
-        if(identifier == null || findVehicle(identifier) != asset ||
-           !isAvailableForPeriod(identifier, pickupDate, duration)){ return null; }
-
-        Rental rental = new Rental(asset, renter, pickupDate, duration);
-        rentals.add(rental);
-        // The vehicle stays in inventory; its active rental makes it unavailable.
-        asset.record(currentDate.getDate() + ": " + asset.getID() + " was rented by " +
-            renter.getName() + " for " + duration + " days.");
-        return rental;
     }
 
     /**
