@@ -20,22 +20,31 @@ public class Inventory{
         lotStock = new ArrayList<>();
     }
 
-    public Inventory(String lotLocation, ArrayList<Vehicle> lotStock) {
-        agencyLocation = lotLocation;
-        this.lotStock = lotStock;
-    }
-
-    /**
-     * Creates an inventory for the supplied location.
+    /** Creates a rental location with an imported vehicle list.
      *
-     * @param lotLocation the name of the rental location
-     */
+     *  @param lotStock     This is the imported lot list.      */
+    public Inventory(ArrayList<Vehicle> lotStock) {
+        agencyLocation = "Unnamed Lot";
+        this.lotStock = lotStock;
+        }
+
+    /** Creates and names a rental location.
+     *
+     *  @param lotLocation  This is the name of the lot.
+     *  @param lotStock     This is the imported lot list.      */
     public Inventory(String lotLocation) {
         agencyLocation = lotLocation;
         lotStock = new ArrayList<>();
     }
 
-    public Inventory(ArrayList<Vehicle> lotStock) { this.lotStock = lotStock; }
+    /** Creates and names an rental location with an imported vehicle list.
+     *
+     *  @param lotLocation  This is the name of the lot.
+     *  @param lotStock     This is the imported lot list.      */
+    public Inventory(String lotLocation, ArrayList<Vehicle> lotStock) {
+        agencyLocation = lotLocation;
+        this.lotStock = lotStock;
+    }
 
 
     // PRIVATE METHODS ------------------------------------------------------------------
