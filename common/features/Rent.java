@@ -8,17 +8,16 @@ import java.util.ArrayList;
  * This class contains application logic; the console menu is handled elsewhere.
  */
 public class Rent{
-    /** Current and completed rentals created by this inventory. */
-    private Inventory inventory;                                  // Unused but here anyway
+    /** Inventory which holds the list of vehicles. (Unused but here anyway) */
+    private Inventory inventory;
     /** Current and completed rentals created by this inventory. */
     private ArrayList<Booking> rentals;
     /** The Date object with the current date */
     private Date currentDate = Date.today();
-    /** Creates an inventory with the default location name. */
 
 
 // CONSTRUCTORS ---------------------------------------------------------------------------------
-    /** Creates an inventory with the default location name. */
+    /** Initiates the Rent class with a vehicle list and list of rentals. */
     public Rent(Inventory inventory, ArrayList<Booking> rentals) {
         this.inventory = inventory;
         this.rentals = rentals;
