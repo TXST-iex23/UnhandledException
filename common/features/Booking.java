@@ -1,6 +1,6 @@
-package common;
+package common.feature;
 
-import common.vehicles.Vehicle;
+import common.feature.vehicles.Vehicle;
 
 /**
  * Represents an immediate rental or a future reservation for one vehicle.

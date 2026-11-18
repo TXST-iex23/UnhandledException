@@ -1,4 +1,4 @@
-package common;
+package common.features;
 
 /**
  * Stores the contact and account information for a vehicle rental customer.

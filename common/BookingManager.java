@@ -1,7 +1,8 @@
 package common;
-import java.util.ArrayList;
 
-import common.vehicles.*;
+import common.features.*;
+import common.features.vehicles.*;
+import java.util.ArrayList;
 
 /**
  * Manages the vehicles at one rental location and keeps rental records.
