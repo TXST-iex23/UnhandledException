@@ -30,7 +30,10 @@ public class Inventory{
      *
      * @param lotLocation the name of the rental location
      */
-    public Inventory(String lotLocation) { agencyLocation = lotLocation; }
+    public Inventory(String lotLocation) {
+        agencyLocation = lotLocation;
+        lotStock = new ArrayList<>();
+    }
 
     public Inventory(ArrayList<Vehicle> lotStock) { this.lotStock = lotStock; }
 
