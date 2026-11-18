@@ -3,10 +3,7 @@ package common.features;
 import common.features.vehicles.*;
 import java.util.ArrayList;
 
-/**
- * Manages the vehicles at one rental location and keeps rental records.
- * This class contains application logic; the console menu is handled elsewhere.
- */
+/** Manages vehicle reservations.       */
 public class Reserve{
     /** Vehicles currently owned by this location. */
     private ArrayList<Vehicle> lotStock = new ArrayList<>();
