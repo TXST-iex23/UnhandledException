@@ -20,17 +20,19 @@ public class Reserve{
 
 
     // CONSTRUCTOR ------------------------------------------------------------------------------
+
     /**
-     * Creates an inventory for the supplied location.
+     * Initiates the class with an inventory and a list of bookings.
      *
-     * @param lotLocation the name of the rental location
-     */
+     * @param inventory     A list of all vehicle in inventory
+     * @param bookings      A list of rentals, reservations, and returns     */
     public Reserve(Inventory inventory, ArrayList<Booking> bookings) {
         this.bookings = bookings;
         this.lotStock = inventory.list();
     }
 
     // PRIVATE METHODS --------------------------------------------------------------------------
+
     /** Finds a reservation by its ID only while it is pending. */
     private Booking findReservation(String reservationID){
         if(reservationID == null || reservationID.trim().isEmpty()){ return null; }
@@ -54,6 +56,7 @@ public class Reserve{
 
 
 // PUBLIC METHODS -------------------------------------------------------------------------------
+
     /**
      * Makes a new list containing vehicles that are not currently rented.
      * Changes to the returned list do not change the inventory itself.

@@ -17,13 +17,19 @@ public class Rent{
 
 
 // CONSTRUCTORS ---------------------------------------------------------------------------------
-    /** Initiates the Rent class with a vehicle list and list of rentals. */
+
+    /**
+     * Initiates the class with an inventory and a list of bookings.
+     *
+     * @param inventory     A list of all vehicle in inventory
+     * @param bookings      A list of rentals, reservations, and returns     */
     public Rent(Inventory inventory, ArrayList<Booking> rentals) {
         this.inventory = inventory;
         this.rentals = rentals;
     }
 
 // PUBLIC METHODS -------------------------------------------------------------------------------
+
     /**
      * Completes the active rental for a vehicle and records its return.
      *
