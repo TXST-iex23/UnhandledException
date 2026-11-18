@@ -31,7 +31,7 @@ public class BookingManager {
 
     // PUBLIC METHODS -------------------------------------------------------------------
     // INVENTORY METHODS <><><><><><><><<><><><><><><><><><><><><><><><><><><><><><<><><>
-    public String getLotName(String agencyLocation){ return inventory.getLotName(); }
+    public String getLotName(){ return inventory.getLotName(); }
     public void setLotName(String agencyLocation){ inventory.setLotName(agencyLocation); }
     public Vehicle find(String identifier){ return inventory.findVehicle(identifier); }
     public void add(Vehicle asset){ inventory.addVehicle(asset); }
@@ -56,18 +56,18 @@ public class BookingManager {
 
 
     // RENT METHODS <><><><><><><><<><><><><><><><><><><><><><><><><>
-    public void rentVehicle(Vehicle asset, Renter renter, int duration) {
+    public Booking rentVehicle(Vehicle asset, Renter renter, int duration) {
         String identifier = asset.getID();
         if(identifier == null || inventory.findVehicle(identifier) != asset ||
-        !rsvd.isAvailableForPeriod(asset, currentDate, duration)) { return; }
-        rent.rentVehicle(asset,renter,duration);
+        !rsvd.isAvailableForPeriod(asset, currentDate, duration)) { return null; }
+        return rent.rentVehicle(asset,renter,duration);
     }
 
-    public void returnVehicle(String identifier){
+    public Booking returnVehicle(String identifier){
         Vehicle asset = inventory.findVehicle(identifier);
         // An unknown ID cannot have an active rental in this inventory.
-        if(asset == null){ return; }
-        rent.returnVehicle(asset);
+        if(asset == null){ return null; }
+        return rent.returnVehicle(asset);
     }
 
 
@@ -94,9 +94,14 @@ public class BookingManager {
 
     public boolean cancelReservation(String reservationID){ return rsvd.cancelReservation(reservationID); }
 
-    public void activate(String reservationID){ rsvd.activateReservation(reservationID); }
+    public Booking activate(String reservationID){ return rsvd.activateReservation(reservationID); }
 
     public ArrayList<Vehicle> getAvailableVehicles(Date pickupDate, int duration)
         { return rsvd.getAvailableVehicles(pickupDate, duration); }
 
+
+    // ADDITIONAL METHODS <><><><><><><><<><><><><><><><><><><><><><><><><>
+    public Inventory getInventory(){
+        return inventory;
+    }
 }

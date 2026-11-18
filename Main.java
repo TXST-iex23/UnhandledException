@@ -1,3 +1,4 @@
+import common.BookingManager;
 import common.features.Inventory;
 import common.features.vehicles.Car;
 import common.features.vehicles.Motorcycle;
@@ -25,7 +26,7 @@ public class Main{
         inventory.addVehicle(new Car(2023, "Honda", "Civic","C"));
         inventory.addVehicle(new Motorcycle(2024, "Honda", "Rebel","M"));
 
-        ConsoleUI console = new ConsoleUI(inventory);
+        ConsoleUI console = new ConsoleUI(new BookingManager(inventory));
         console.run();
     }
 }
