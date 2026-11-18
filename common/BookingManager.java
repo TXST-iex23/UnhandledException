@@ -1,7 +1,6 @@
 package common;
 
 import common.features.*;
-import common.features.Inventory;
 import common.features.vehicles.*;
 import java.util.ArrayList;
 
@@ -73,6 +72,25 @@ public class BookingManager {
 
 
     // RESERVE METHODS <><><><><><><><<><><><><><><><><><><><><><><><><>
+    public ArrayList<Vehicle> availableVehicles(){ return rsvd.getAvailableVehicles(); }
 
+    public boolean isAvailable(String identifier){ return rsvd.isAvailable(identifier); }
+
+    public ArrayList<Booking> activeRentals(){ return rsvd.getActiveRentals(); }
+
+    public ArrayList<Booking> reservations(){ return rsvd.getReservations(); }
+
+    public boolean willBeAvailable(String identifier, Date pickupDate, int duration)
+        { return rsvd.isAvailableForPeriod(identifier, pickupDate, duration); }
+
+    public Booking reserve(String identifier, Renter renter, Date pickupDate, int duration)
+        { return rsvd.reserveVehicle(identifier, renter, pickupDate, duration); }
+
+    public boolean cancelReservation(String reservationID){ return rsvd.cancelReservation(reservationID); }
+
+    public void activate(String reservationID){ rsvd.activateReservation(reservationID); }
+
+    public ArrayList<Vehicle> getAvailableVehicles(Date pickupDate, int duration)
+        { return rsvd.getAvailableVehicles(pickupDate, duration); }
 
 }
