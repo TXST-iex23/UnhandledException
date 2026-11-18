@@ -1,4 +1,4 @@
-package common.feature;
+package common.features;
 
 import java.time.LocalDate;
 

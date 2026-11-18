@@ -108,11 +108,10 @@ public class Inventory{
     public void removeVehicle(String identifier){
         int index = getIndexByID(identifier);
         // Keep the vehicle in the lot until its active rental has been returned.
-        if(index >= 0 && isAvailable(identifier) && !hasPendingReservation(lotStock.get(index))){
-            lotStock.get(index).record(currentDate.getDate() + ": " + identifier +
-                " was removed from the inventory.");
-            lotStock.remove(index);
-        }
+        // if(index >= 0 && isAvailable(identifier) && !hasPendingReservation(lotStock.get(index))){
+        lotStock.get(index).record(currentDate.getDate() + ": " + identifier +
+            " was removed from the inventory.");
+        lotStock.remove(index);
     }
 
     /**

@@ -1,4 +1,4 @@
-package common.feature.vehicles;
+package common.features.vehicles;
 
 /**
  * A car is a concrete kind of {@link Vehicle} with a $50 daily rental rate.
