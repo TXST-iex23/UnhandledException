@@ -17,20 +17,20 @@ public class Reserve{
     /** The Date object with the current date */
     private Date currentDate = Date.today();
     /** Creates an inventory with the default location name. */
-    public Reserve() { bookings = new ArrayList<>(); }
 
 
+    // CONSTRUCTOR ------------------------------------------------------------------------------
     /**
      * Creates an inventory for the supplied location.
      *
      * @param lotLocation the name of the rental location
      */
-    public Reserve(ArrayList<Vehicle> lotStock) {
-        bookings = new ArrayList<>();
-        this.lotStock = lotStock;
+    public Reserve(Inventory inventory, ArrayList<Booking> bookings) {
+        this.bookings = bookings;
+        this.lotStock = inventory.list();
     }
 
-// PRIVATE METHODS -------------------------------------------------------------------------------
+    // PRIVATE METHODS --------------------------------------------------------------------------
     /** Finds a reservation by its ID only while it is pending. */
     private Booking findReservation(String reservationID){
         if(reservationID == null || reservationID.trim().isEmpty()){ return null; }

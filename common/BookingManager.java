@@ -17,7 +17,11 @@ public class BookingManager {
 
     // CONSTRUCTORS ------------------------------------------------------------------
     /** Begins the class with an empty inventory. */
-    public BookingManager() { inventory = new Inventory(); }
+    public BookingManager() {
+        inventory = new Inventory();
+        rent = new Rent(inventory, bookings);
+        rsvd = new Reserve(inventory, bookings);
+    }
 
     /**
      * Imports the inventory that will be referenced.
@@ -26,6 +30,8 @@ public class BookingManager {
      */
     public BookingManager(Inventory inventory) {
         this.inventory = inventory;
+        rent = new Rent(inventory,bookings);
+        rsvd = new Reserve(inventory,bookings);
     }
 
 

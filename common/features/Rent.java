@@ -9,12 +9,20 @@ import java.util.ArrayList;
  */
 public class Rent{
     /** Current and completed rentals created by this inventory. */
+    private Inventory inventory;                                  // Unused but here anyway
+    /** Current and completed rentals created by this inventory. */
     private ArrayList<Booking> rentals;
     /** The Date object with the current date */
     private Date currentDate = Date.today();
     /** Creates an inventory with the default location name. */
-    public Rent() { rentals = new ArrayList<>(); }
 
+
+// CONSTRUCTORS ---------------------------------------------------------------------------------
+    /** Creates an inventory with the default location name. */
+    public Rent(Inventory inventory, ArrayList<Booking> rentals) {
+        this.inventory = inventory;
+        this.rentals = rentals;
+    }
 
 // PUBLIC METHODS -------------------------------------------------------------------------------
     /**
