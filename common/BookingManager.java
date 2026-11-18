@@ -1,6 +1,7 @@
 package common;
 
 import common.features.*;
+import common.features.Inventory;
 import common.features.vehicles.*;
 import java.util.ArrayList;
 
@@ -13,6 +14,8 @@ public class BookingManager {
     private Inventory inventory;
     /** The rent feature which creates bookings. */
     private Rent rent;
+    /** The rent feature which creates bookings. */
+    private Reserve rsvd;
     /** Current and completed rentals created by this inventory. */
     private ArrayList<Booking> bookings = new ArrayList<>();
     /** Number used to assign the next reservation ID. */
@@ -42,7 +45,11 @@ public class BookingManager {
     // INVENTORY METHODS  <><><><><><><><<><><><><><><><><><><><><><>
     public Vehicle find(String identifier){ return inventory.findVehicle(identifier); }
     public void add(Vehicle asset){ inventory.addVehicle(asset); }
-    public void remove(String identifier){ inventory.removeVehicle(identifier); }
+    public void remove(String identifier){ 
+         if(rsvd.isAvailable(identifier) && !rsvd.hasPendingReservation(inventory.lotStock.get(index))){
+            inventory.removeVehicle(identifier); 
+        }
+    }
     public ArrayList<Vehicle> list(){ return  inventory.list(); }
     public void importList(ArrayList<Vehicle> lotStock){ inventory.importList(lotStock); }
     public String getLotName(String agencyLocation){ return inventory.getLotName(); }
@@ -50,8 +57,19 @@ public class BookingManager {
 
     // RENT METHODS <><><><><><><><<><><><><><><><><><><><><><><><><>
     public ArrayList<Vehicle> available(){ return rent.getAvailableVehicles(); }
-    public void rentVehicle(Vehicle asset, Renter renter, int duration) { rent.rentVehicle(asset,renter,duration); }
-    public void returnVehicle(String identifier){ rent.returnVehicle(identifier); }
+    
+    public void rentVehicle(Vehicle asset, Renter renter, int duration) {
+        String identifier = asset.getID();     
+        if(identifier == null || inventory.findVehicle(identifier) != asset ||
+        !rsvd.isAvailableForPeriod(identifier, currentDate, duration)) { return; }
+        rent.rentVehicle(asset,renter,duration);
+    }
+
+    public void returnVehicle(String identifier){
+        Vehicle asset = inventory.findVehicle(identifier);
+        // An unknown ID cannot have an active rental in this inventory.
+        if(asset == null){ return; }
+        rent.returnVehicle(identifier); }
 
     // RESERVE METHODS <><><><><><><><<><><><><><><><><><><><><><><><><>
 

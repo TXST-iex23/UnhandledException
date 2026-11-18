@@ -117,9 +117,6 @@ public class Rent{
      * @return the completed rental, or {@code null} if there is no active rental
      */
     public Booking returnVehicle(String identifier){
-        Vehicle asset = findVehicle(identifier);
-        // An unknown ID cannot have an active rental in this inventory.
-        if(asset == null){ return null; }
 
         // Mark the existing rental complete instead of deleting its history.
         for(Booking rental : rentals){
@@ -145,13 +142,7 @@ public class Rent{
     public Booking rentVehicle(Vehicle asset, Renter renter, int duration){
         // Basic argument checks prevent invalid rentals from reaching Rental.
         if(asset == null || renter == null || duration <= 0){ return null; }
-        String identifier = asset.getID();
-        // Identity comparison ensures this is the actual inventory vehicle, not a copy.
-        Date pickupDate = Date.today();
-        if(identifier == null || findVehicle(identifier) != asset ||
-           !isAvailableForPeriod(identifier, pickupDate, duration)){ return null; }
-
-        Booking rental = new Booking(asset, renter, pickupDate, duration);
+        Booking rental = new Booking(asset, renter, currentDate, duration);
         rentals.add(rental);
         // The vehicle stays in inventory; its active rental makes it unavailable.
         asset.record(currentDate.getDate() + ": " + asset.getID() + " was rented by " +

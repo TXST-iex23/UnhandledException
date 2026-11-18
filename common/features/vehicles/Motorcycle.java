@@ -1,4 +1,4 @@
-package common.feature.vehicles;
+package common.features.vehicles;
 
 /**
  * A motorcycle is a concrete {@link Vehicle} with a $35 daily rental rate.
