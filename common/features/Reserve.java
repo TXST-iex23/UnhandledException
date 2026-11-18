@@ -16,9 +16,9 @@ public class Reserve{
     private int nextReservationNumber = 1;
     /** The Date object with the current date */
     private Date currentDate = Date.today();
-
     /** Creates an inventory with the default location name. */
     public Reserve() { bookings = new ArrayList<>(); }
+
 
     /**
      * Creates an inventory for the supplied location.
@@ -51,7 +51,6 @@ public class Reserve{
         }
         return false;
     }
-
 
 
 // PUBLIC METHODS -------------------------------------------------------------------------------
