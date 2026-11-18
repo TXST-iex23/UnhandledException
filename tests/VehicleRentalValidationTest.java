@@ -1,15 +1,14 @@
 package tests;
 
 import java.time.LocalDate;
-
-import common.Date;
-import common.Inventory;
-import common.Renter;
-import common.Booking;
 import common.BookingManager;
-import common.vehicles.Car;
-import common.vehicles.Motorcycle;
-import common.vehicles.Vehicle;
+import common.features.Date;
+import common.features.Inventory;
+import common.features.Renter;
+import common.features.Booking;
+import common.features.vehicles.Car;
+import common.features.vehicles.Motorcycle;
+import common.features.vehicles.Vehicle;
 
 /**
  * Small, dependency-free checks for rental and input-validation behavior.

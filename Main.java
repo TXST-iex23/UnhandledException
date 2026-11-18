@@ -1,6 +1,6 @@
-import common.Inventory;
-import common.vehicles.Car;
-import common.vehicles.Motorcycle;
+import common.features.Inventory;
+import common.features.vehicles.Car;
+import common.features.vehicles.Motorcycle;
 import console.ConsoleUI;
 
 /**

@@ -2,14 +2,14 @@ package console;
 
 import java.util.ArrayList;
 import java.util.Scanner;
-
-import common.Date;
-import common.Inventory;
-import common.Renter;
-import common.Booking;
-import common.vehicles.Car;
-import common.vehicles.Motorcycle;
-import common.vehicles.Vehicle;
+import common.BookingManager;
+import common.features.Date;
+import common.features.Inventory;
+import common.features.Renter;
+import common.features.Booking;
+import common.features.vehicles.Car;
+import common.features.vehicles.Motorcycle;
+import common.features.vehicles.Vehicle;
 
 /**
  * Reads user choices and displays results for the vehicle rental application.

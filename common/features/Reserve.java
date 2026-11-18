@@ -31,38 +31,6 @@ public class Reserve{
     }
 
 // PRIVATE METHODS -------------------------------------------------------------------------------
-    /**
-     * Finds the list position of a vehicle ID, ignoring surrounding spaces.
-     *
-     * @param identifier the vehicle ID to search for
-     * @return the vehicle's index, or {@code -1} when the ID is invalid or absent
-     */
-        private int getIndexByID(String identifier){
-        if(identifier == null){ return -1; }
-        String searchID = identifier.trim();
-        if(searchID.isEmpty()){ return -1; }
-        int cnt = lotStock.size();
-        // Search each vehicle because the inventory is stored in a simple list.
-        for(int i = 0; i < cnt; i++){
-            if(searchID.equals(lotStock.get(i).getID())){ return i; }
-        }
-        return -1;
-    }
-
-    /**
-     * Checks whether the exact vehicle object is already in the inventory.
-     * Reference equality is used because two distinct cars may have identical details.
-     *
-     * @param asset the vehicle object to check
-     * @return {@code true} if this object is already present
-     */
-    private boolean findVehicleByObject(Vehicle asset){
-        for(Vehicle vehicle : lotStock){
-            if(vehicle == asset){ return true; }
-        }
-        return false;
-    }
-
     /** Finds a reservation by its ID only while it is pending. */
     private Booking findReservation(String reservationID){
         if(reservationID == null || reservationID.trim().isEmpty()){ return null; }
@@ -84,14 +52,7 @@ public class Reserve{
         return false;
     }
 
-    /** Checks whether a vehicle is referenced by a pending reservation. */
-    private boolean hasPendingReservation(Vehicle asset){
-        for(Booking booking : bookings){
-            if(booking.getVehicle() == asset &&
-               booking.getLifecycleState() == Booking.Status.RESERVED){ return true; }
-        }
-        return false;
-    }
+
 
 // PUBLIC METHODS -------------------------------------------------------------------------------
     /**
