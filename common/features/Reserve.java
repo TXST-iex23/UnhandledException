@@ -104,20 +104,11 @@ public class Reserve{
         ArrayList<Vehicle> availableVehicles = new ArrayList<>();
         // Check rental status for each vehicle rather than storing a second status flag.
         for(Vehicle asset : lotStock){
-            if(isAvailable(asset.getID())){ availableVehicles.add(asset); }
+            if(isAvailableForPeriod(asset,currentDate,1)){ availableVehicles.add(asset); }
         }
         return availableVehicles;
     }
 
-    /**
-     * Checks whether an inventory vehicle is not part of an active rental.
-     *
-     * @param identifier the vehicle ID to check
-     * @return {@code true} only when the ID belongs to an available vehicle
-     */
-    public boolean isAvailable(String identifier){
-        return isAvailableForPeriod(identifier, Date.today(), 1);
-    }
 
     /**
      * Makes a new list of rentals that have not yet been returned.
@@ -157,9 +148,8 @@ public class Reserve{
      * @param duration the number of occupied days; must be positive
      * @return {@code true} if the vehicle is in this inventory and has no conflict
      */
-    public boolean isAvailableForPeriod(String identifier, Date pickupDate, int duration){
+    public boolean isAvailableForPeriod(Vehicle asset, Date pickupDate, int duration){
         if(pickupDate == null || duration <= 0){ return false; }
-        Vehicle asset = findVehicle(identifier);
         if(asset == null){ return false; }
 
         long newStart = pickupDate.getDateCode();
@@ -191,10 +181,9 @@ public class Reserve{
      * @param duration the number of occupied days; must be positive
      * @return the new reservation, or {@code null} if the request is invalid or unavailable
      */
-    public Booking reserveVehicle(String identifier, Renter renter, Date pickupDate, int duration){
-        Vehicle asset = findVehicle(identifier);
+    public Booking reserveVehicle(Vehicle asset, Renter renter, Date pickupDate, int duration){
         if(asset == null || renter == null || pickupDate == null ||
-           !isAvailableForPeriod(identifier, pickupDate, duration)){
+           !isAvailableForPeriod(asset, pickupDate, duration)){
             return null;
         }
 
@@ -250,7 +239,7 @@ public class Reserve{
     public ArrayList<Vehicle> getAvailableVehicles(Date pickupDate, int duration){
         ArrayList<Vehicle> availableVehicles = new ArrayList<>();
         for(Vehicle asset : lotStock){
-            if(isAvailableForPeriod(asset.getID(), pickupDate, duration)){
+            if(isAvailableForPeriod(asset, pickupDate, duration)){
                 availableVehicles.add(asset);
             }
         }

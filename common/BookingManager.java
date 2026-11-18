@@ -47,7 +47,7 @@ public class BookingManager {
                 break;
             }
         }
-        if(rsvd.isAvailable(identifier) && !isRsvd){ inventory.removeVehicle(identifier); }
+        if(rsvd.isAvailableForPeriod(asset,currentDate,1) && !isRsvd){ inventory.removeVehicle(identifier); }
     }
 
     public ArrayList<Vehicle> list(){ return  inventory.list(); }
@@ -59,7 +59,7 @@ public class BookingManager {
     public void rentVehicle(Vehicle asset, Renter renter, int duration) {
         String identifier = asset.getID();
         if(identifier == null || inventory.findVehicle(identifier) != asset ||
-        !rsvd.isAvailableForPeriod(identifier, currentDate, duration)) { return; }
+        !rsvd.isAvailableForPeriod(asset, currentDate, duration)) { return; }
         rent.rentVehicle(asset,renter,duration);
     }
 
@@ -74,17 +74,23 @@ public class BookingManager {
     // RESERVE METHODS <><><><><><><><<><><><><><><><><><><><><><><><><>
     public ArrayList<Vehicle> availableVehicles(){ return rsvd.getAvailableVehicles(); }
 
-    public boolean isAvailable(String identifier){ return rsvd.isAvailable(identifier); }
+    public boolean isAvailable(String identifier){
+        Vehicle asset = inventory.findVehicle(identifier);
+        return rsvd.isAvailableForPeriod(asset, currentDate, 1); }
 
     public ArrayList<Booking> activeRentals(){ return rsvd.getActiveRentals(); }
 
     public ArrayList<Booking> reservations(){ return rsvd.getReservations(); }
 
-    public boolean willBeAvailable(String identifier, Date pickupDate, int duration)
-        { return rsvd.isAvailableForPeriod(identifier, pickupDate, duration); }
+    public boolean willBeAvailable(String identifier, Date pickupDate, int duration){
+        Vehicle asset = inventory.findVehicle(identifier);
+        return rsvd.isAvailableForPeriod(asset, pickupDate, duration);
+    }
 
-    public Booking reserve(String identifier, Renter renter, Date pickupDate, int duration)
-        { return rsvd.reserveVehicle(identifier, renter, pickupDate, duration); }
+    public Booking reserve(String identifier, Renter renter, Date pickupDate, int duration){
+            Vehicle asset = inventory.findVehicle(identifier);
+            return rsvd.reserveVehicle(asset, renter, pickupDate, duration);
+        }
 
     public boolean cancelReservation(String reservationID){ return rsvd.cancelReservation(reservationID); }
 
