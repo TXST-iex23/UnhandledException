@@ -3,7 +3,6 @@ package tests;
 import java.time.LocalDate;
 import common.BookingManager;
 import common.features.Date;
-import common.features.Inventory;
 import common.features.Renter;
 import common.features.Booking;
 import common.features.vehicles.Car;
@@ -33,23 +32,23 @@ public class VehicleRentalValidationTest{
 
     /** Checks inventory, rental, return, pricing, and vehicle-history behavior. */
     private static void testInventoryAndRentals(){
-        Inventory inventory = new Inventory();
+        BookingManager manager = new BookingManager();
         Car car = new Car(2022, "Toyota", "Camry", "C");
-        inventory.addVehicle(car);
+        manager.add(car);
         String carID = car.getID();
-        check(inventory.findVehicle(carID) == car, "vehicle receives a generated ID when added");
+        check(manager.find(carID) == car, "vehicle receives a generated ID when added");
         check(carID.startsWith("C"), "generated car ID has the car prefix");
 
         Car duplicateIDCar = new Car(2023, "Honda", "Civic", "C");
         duplicateIDCar.setID(carID);
-        inventory.addVehicle(duplicateIDCar);
+        manager.add(duplicateIDCar);
         // The existing vehicle remains the match when an ID is duplicated.
-        check(inventory.findVehicle(carID) == car, "duplicate ID is rejected");
-        inventory.addVehicle(car);
-        check(inventory.getAvailableVehicles().size() == 1,
+        check(manager.find(carID) == car, "duplicate ID is rejected");
+        manager.add(car);
+        check(manager.availableVehicles().size() == 1,
               "duplicate vehicle is not added to inventory");
-        inventory.addVehicle(null);
-        check(inventory.getAvailableVehicles().size() == 1, "null vehicle is rejected");
+        manager.add(null);
+        check(manager.availableVehicles().size() == 1, "null vehicle is rejected");
 
         Vehicle unusedVehicle = new Car();
         check(unusedVehicle.getHistory().equals("No history available."),
@@ -58,12 +57,12 @@ public class VehicleRentalValidationTest{
         Renter renter = new Renter("Jamie", "Student");
         Vehicle carVehicle = car;
         Vehicle motorcycle = new Motorcycle(2024, "Honda", "Rebel", "M");
-        inventory.addVehicle(motorcycle);
+        manager.add(motorcycle);
         String motorcycleID = motorcycle.getID();
         check(carVehicle.calculateRentalCost(2) != motorcycle.calculateRentalCost(2),
               "car and motorcycle use different pricing overrides through Vehicle methods");
-        
-        BookingManager bkMgr = new BookingManager(inventory);
+
+        BookingManager bkMgr = new BookingManager(manager.getInventory());
         Booking motorcycleRental = bkMgr.rentVehicle(motorcycle, renter, 2);
         check(motorcycleRental != null && motorcycleRental.getTotalCharge() == 70.0,
               "motorcycle rental charge uses its $35 daily rate through a Vehicle reference");
@@ -84,13 +83,13 @@ public class VehicleRentalValidationTest{
         // A two-day car rental uses the Car pricing override: $50 per day.
         check(rental != null, "valid rental succeeds");
         check(rental.getTotalCharge() == 100.0, "car rental charge is correct");
-        check(!inventory.isAvailable(carID), "rented vehicle is unavailable");
+        check(!manager.isAvailable(carID), "rented vehicle is unavailable");
         check(bkMgr.rentVehicle(car, renter, 1) == null,
               "vehicle with active rental cannot be rented again");
 
-        inventory.removeVehicle(carID);
+        manager.remove(carID);
         // Removal is ignored while the vehicle is part of an active rental.
-        check(inventory.findVehicle(carID) == car,
+        check(manager.find(carID) == car,
               "vehicle with active rental cannot be removed");
         check(bkMgr.returnVehicle("UNKNOWN") == null,
               "unknown vehicle return is safe");
@@ -100,8 +99,8 @@ public class VehicleRentalValidationTest{
               "active rental can be returned");
         check(bkMgr.isAvailable(carID), "returned vehicle is available again");
         check(car.getHistory().contains("was returned"), "return is recorded in history");
-        inventory.removeVehicle(carID);
-        check(inventory.findVehicle(carID) == null,
+        manager.remove(carID);
+        check(manager.find(carID) == null,
               "vehicle can be removed after return");
 
         checkThrows(() -> new Booking(car, renter, 0),
@@ -131,38 +130,38 @@ public class VehicleRentalValidationTest{
 
     /** Checks reservation validation, date conflicts, and lifecycle changes. */
     private static void testReservations(){
-        Inventory inventory = new Inventory();
+        BookingManager manager = new BookingManager();
         Car firstCar = new Car(2022, "Toyota", "Camry", "C");
         Car secondCar = new Car(2023, "Honda", "Civic", "C");
-        inventory.addVehicle(firstCar);
-        inventory.addVehicle(secondCar);
+        manager.add(firstCar);
+        manager.add(secondCar);
         String firstCarID = firstCar.getID();
         String secondCarID = secondCar.getID();
         Renter renter = new Renter("Jamie", "Student");
         Date firstPickup = dateAfter(5);
 
-        check(inventory.reserveVehicle("UNKNOWN", renter, firstPickup, 3) == null,
+        check(manager.reserve("UNKNOWN", renter, firstPickup, 3) == null,
               "unknown vehicle cannot be reserved");
-        check(inventory.reserveVehicle(firstCarID, null, firstPickup, 3) == null,
+        check(manager.reserve(firstCarID, null, firstPickup, 3) == null,
               "reservation requires a renter");
-        check(inventory.reserveVehicle(firstCarID, renter, null, 3) == null,
+        check(manager.reserve(firstCarID, renter, null, 3) == null,
               "reservation requires a pickup date");
-        check(inventory.reserveVehicle(firstCarID, renter, dateAfter(-1), 3) == null,
+        check(manager.reserve(firstCarID, renter, dateAfter(-1), 3) == null,
               "past pickup date is rejected");
-        check(inventory.reserveVehicle(firstCarID, renter, firstPickup, 0) == null,
+        check(manager.reserve(firstCarID, renter, firstPickup, 0) == null,
               "zero-day reservation is rejected");
-        check(inventory.reserveVehicle(firstCarID, renter, firstPickup, -1) == null,
+        check(manager.reserve(firstCarID, renter, firstPickup, -1) == null,
               "negative-day reservation is rejected");
-        check(inventory.getReservations().isEmpty(),
+        check(manager.reservations().isEmpty(),
               "invalid reservation requests leave the list unchanged");
 
-        Booking first = inventory.reserveVehicle(firstCarID, renter, firstPickup, 3);
+        Booking first = manager.reserve(firstCarID, renter, firstPickup, 3);
         check(first != null && first.getReservationID().equals("R0001"),
               "valid reservation is created after invalid requests");
         check(first.getLifecycleState() == Booking.Status.RESERVED,
               "new reservation starts in reserved state");
-        check(!inventory.getAvailableVehicles(firstPickup, 3).contains(firstCar) &&
-              inventory.getAvailableVehicles(firstPickup, 3).contains(secondCar),
+        check(!manager.getAvailableVehicles(firstPickup, 3).contains(firstCar) &&
+              manager.getAvailableVehicles(firstPickup, 3).contains(secondCar),
               "period availability excludes only the reserved vehicle");
 
         int savedPickupCode = first.getPickupDate().getDateCode();
@@ -172,72 +171,72 @@ public class VehicleRentalValidationTest{
         check(first.getPickupDate().getDateCode() == savedPickupCode,
               "reservation keeps a protected copy of its pickup date");
 
-        check(inventory.reserveVehicle(firstCarID, renter, dateAfter(7), 1) == null,
+        check(manager.reserve(firstCarID, renter, dateAfter(7), 1) == null,
               "reservation sharing the final occupied day is rejected");
-        check(inventory.getReservations().size() == 1 &&
+        check(manager.reservations().size() == 1 &&
               first.getLifecycleState() == Booking.Status.RESERVED,
               "overlap rejection leaves existing reservation unchanged");
 
-        Booking adjacent = inventory.reserveVehicle(firstCarID, renter, dateAfter(8), 2);
+        Booking adjacent = manager.reserve(firstCarID, renter, dateAfter(8), 2);
         check(adjacent != null, "adjacent reservation periods are allowed");
         check(adjacent.getReservationID().equals("R0002"),
               "adjacent reservation receives the next ID");
 
-        check(inventory.cancelReservation(first.getReservationID()),
+        check(manager.cancelReservation(first.getReservationID()),
               "pending reservation can be cancelled");
         check(first.getLifecycleState() == Booking.Status.CANCELLED,
               "cancellation changes the reservation state");
-        Booking replacement = inventory.reserveVehicle(firstCarID, renter, dateAfter(5), 3);
+        Booking replacement = manager.reserve(firstCarID, renter, dateAfter(5), 3);
         check(replacement != null, "cancellation frees the reserved dates");
-        check(!inventory.cancelReservation("NO-SUCH-RESERVATION"),
+        check(!manager.cancelReservation("NO-SUCH-RESERVATION"),
               "unknown reservation ID is rejected");
-        check(!inventory.cancelReservation(first.getReservationID()),
+        check(!manager.cancelReservation(first.getReservationID()),
               "cancelled reservation cannot be cancelled again");
         check(first.getLifecycleState() == Booking.Status.CANCELLED &&
-              inventory.getReservations().size() == 2,
+              manager.reservations().size() == 2,
               "invalid cancellation leaves current reservation state unchanged");
 
-        Booking future = inventory.reserveVehicle(secondCarID, renter, dateAfter(1), 2);
+        Booking future = manager.reserve(secondCarID, renter, dateAfter(1), 2);
         check(future != null, "second vehicle can be reserved for a future date");
-        check(inventory.activateReservation("UNKNOWN") == null,
+        check(manager.activate("UNKNOWN") == null,
               "unknown reservation cannot be activated");
-        check(inventory.activateReservation(future.getReservationID()) == null,
+        check(manager.activate(future.getReservationID()) == null,
               "reservation cannot be activated before its pickup date");
         check(future.getLifecycleState() == Booking.Status.RESERVED &&
-              inventory.getReservations().contains(future),
+              manager.reservations().contains(future),
               "early activation leaves reservation pending");
-        check(inventory.cancelReservation(future.getReservationID()),
+        check(manager.cancelReservation(future.getReservationID()),
               "future reservation can be cancelled");
 
-        Booking today = inventory.reserveVehicle(secondCarID, renter, Date.today(), 2);
+        Booking today = manager.reserve(secondCarID, renter, Date.today(), 2);
         check(today != null, "today is accepted as a pickup date");
-        check(!inventory.isAvailable(secondCarID),
+        check(!manager.isAvailable(secondCarID),
               "reservation starting today makes vehicle unavailable today");
-        check(inventory.rentVehicle(secondCar, renter, 1) == null,
+        check(manager.rentVehicle(secondCar, renter, 1) == null,
               "immediate rental cannot overlap a pending reservation");
 
-        Booking activated = inventory.activateReservation(today.getReservationID());
+        Booking activated = manager.activate(today.getReservationID());
         check(activated == today && today.isActive(),
               "reservation activates on its pickup date");
         check(today.getLifecycleState() == Booking.Status.ACTIVE &&
-              !inventory.getReservations().contains(today),
+              !manager.reservations().contains(today),
               "activated reservation leaves the pending list");
-        check(inventory.reserveVehicle(secondCarID, renter, dateAfter(10), 1) == null,
+        check(manager.reserve(secondCarID, renter, dateAfter(10), 1) == null,
               "active rental prevents another reservation");
-        check(!inventory.cancelReservation(today.getReservationID()),
+        check(!manager.cancelReservation(today.getReservationID()),
               "active rental cannot be cancelled as a reservation");
 
-        Booking returned = inventory.returnVehicle(secondCarID);
+        Booking returned = manager.returnVehicle(secondCarID);
         check(returned == today && today.getLifecycleState() == Booking.Status.RETURNED,
               "existing return process completes an activated reservation");
-        check(!today.isActive() && inventory.isAvailable(secondCarID),
+        check(!today.isActive() && manager.isAvailable(secondCarID),
               "returned activated reservation releases the vehicle");
-        check(inventory.returnVehicle(secondCarID) == null,
+        check(manager.returnVehicle(secondCarID) == null,
               "returned rental cannot be returned again");
-        check(!inventory.cancelReservation(today.getReservationID()) &&
+        check(!manager.cancelReservation(today.getReservationID()) &&
               today.getLifecycleState() == Booking.Status.RETURNED,
               "returned reservation cannot be cancelled");
-        check(inventory.activateReservation(today.getReservationID()) == null,
+        check(manager.activate(today.getReservationID()) == null,
               "returned reservation cannot be activated again");
     }
 
