@@ -95,6 +95,21 @@ public class Reserve{
 
 // PUBLIC METHODS -------------------------------------------------------------------------------
     /**
+     * Makes a new list containing vehicles that are not currently rented.
+     * Changes to the returned list do not change the inventory itself.
+     *
+     * @return a list of currently available vehicles
+     */
+    public ArrayList<Vehicle> getAvailableVehicles(){
+        ArrayList<Vehicle> availableVehicles = new ArrayList<>();
+        // Check rental status for each vehicle rather than storing a second status flag.
+        for(Vehicle asset : lotStock){
+            if(isAvailable(asset.getID())){ availableVehicles.add(asset); }
+        }
+        return availableVehicles;
+    }
+
+    /**
      * Checks whether an inventory vehicle is not part of an active rental.
      *
      * @param identifier the vehicle ID to check

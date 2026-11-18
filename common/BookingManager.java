@@ -10,19 +10,11 @@ import java.util.ArrayList;
  * This class contains application logic; the console menu is handled elsewhere.
  */
 public class BookingManager {
-    /** The inventory from which bookings are made. */
     private Inventory inventory;
-    /** The rent feature which creates bookings. */
     private Rent rent;
-    /** The rent feature which creates bookings. */
     private Reserve rsvd;
-    /** Current and completed rentals created by this inventory. */
     private ArrayList<Booking> bookings = new ArrayList<>();
-    /** Number used to assign the next reservation ID. */
-    private int nextReservationNumber = 1;
-    /** The Date object with the current date */
-    private Date currentDate = Date.today();            // thinking to generalize this so can be used in calculation.
-
+    private Date currentDate = Date.today();
 
     // CONSTRUCTORS ------------------------------------------------------------------
     /** Begins the class with an empty inventory. */
@@ -38,28 +30,35 @@ public class BookingManager {
     }
 
 
-    // PRIVATE METHODS ------------------------------------------------------------------
-
     // PUBLIC METHODS -------------------------------------------------------------------
-
-    // INVENTORY METHODS  <><><><><><><><<><><><><><><><><><><><><><>
-    public Vehicle find(String identifier){ return inventory.findVehicle(identifier); }
-    public void add(Vehicle asset){ inventory.addVehicle(asset); }
-    public void remove(String identifier){ 
-         if(rsvd.isAvailable(identifier) && !rsvd.hasPendingReservation(inventory.lotStock.get(index))){
-            inventory.removeVehicle(identifier); 
-        }
-    }
-    public ArrayList<Vehicle> list(){ return  inventory.list(); }
-    public void importList(ArrayList<Vehicle> lotStock){ inventory.importList(lotStock); }
+    // INVENTORY METHODS <><><><><><><><<><><><><><><><><><><><><><><><><><><><><><<><><>
     public String getLotName(String agencyLocation){ return inventory.getLotName(); }
     public void setLotName(String agencyLocation){ inventory.setLotName(agencyLocation); }
+    public Vehicle find(String identifier){ return inventory.findVehicle(identifier); }
+    public void add(Vehicle asset){ inventory.addVehicle(asset); }
+
+    public void remove(String identifier){
+        Vehicle asset = inventory.findVehicle(identifier);
+        boolean isRsvd = false;
+        /** Checks whether a vehicle is referenced by a pending reservation. */
+
+        for(Booking booking : bookings){
+            if(booking.getVehicle() == asset && booking.getLifecycleState() == Booking.Status.RESERVED){
+                isRsvd = true;
+                break;
+            }
+        }
+        if(rsvd.isAvailable(identifier) && !isRsvd){ inventory.removeVehicle(identifier); }
+    }
+
+    public ArrayList<Vehicle> list(){ return  inventory.list(); }
+    public void importList(ArrayList<Vehicle> lotStock){ inventory.importList(lotStock); }
+
+
 
     // RENT METHODS <><><><><><><><<><><><><><><><><><><><><><><><><>
-    public ArrayList<Vehicle> available(){ return rent.getAvailableVehicles(); }
-    
     public void rentVehicle(Vehicle asset, Renter renter, int duration) {
-        String identifier = asset.getID();     
+        String identifier = asset.getID();
         if(identifier == null || inventory.findVehicle(identifier) != asset ||
         !rsvd.isAvailableForPeriod(identifier, currentDate, duration)) { return; }
         rent.rentVehicle(asset,renter,duration);
@@ -69,7 +68,9 @@ public class BookingManager {
         Vehicle asset = inventory.findVehicle(identifier);
         // An unknown ID cannot have an active rental in this inventory.
         if(asset == null){ return; }
-        rent.returnVehicle(identifier); }
+        rent.returnVehicle(asset);
+    }
+
 
     // RESERVE METHODS <><><><><><><><<><><><><><><><><><><><><><><><><>
 
