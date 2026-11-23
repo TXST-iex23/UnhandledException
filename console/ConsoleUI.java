@@ -2,14 +2,14 @@ package console;
 
 import java.util.ArrayList;
 import java.util.Scanner;
-
-import common.Date;
-import common.Inventory;
-import common.Renter;
-import common.Rental;
-import common.vehicles.Car;
-import common.vehicles.Motorcycle;
-import common.vehicles.Vehicle;
+import common.BookingManager;
+import common.features.Date;
+import common.features.Inventory;
+import common.features.Renter;
+import common.features.Booking;
+import common.features.vehicles.Car;
+import common.features.vehicles.Motorcycle;
+import common.features.vehicles.Vehicle;
 
 /**
  * Reads user choices and displays results for the vehicle rental application.
@@ -18,7 +18,7 @@ import common.vehicles.Vehicle;
  */
 public class ConsoleUI{
     /** The application inventory that this menu operates on. */
-    private Inventory inventory;
+    private BookingManager manager;
     /** Reads complete lines so invalid text can be handled without input conversion errors. */
     private Scanner input;
 
@@ -27,8 +27,8 @@ public class ConsoleUI{
      *
      * @param rentalInventory the inventory used by the menu
      */
-    public ConsoleUI(Inventory rentalInventory){
-        inventory = rentalInventory;
+    public ConsoleUI(BookingManager localManager){
+        manager = localManager;
         input = new Scanner(System.in);
     }
 
@@ -40,8 +40,8 @@ public class ConsoleUI{
         boolean running = true;
         // The loop keeps the menu available after each completed operation.
         while(running){
-            System.out.println("\nVehicle Rental System: "+ inventory.CurrentDateString());
-            System.out.println("Lot: "+ inventory.getLotName() +"\n");
+            System.out.println("\nVehicle Rental System: "+ Date.today());
+            System.out.println("Lot: "+ manager.getLotName() +"\n");
             System.out.println("1. View available vehicles");
             System.out.println("2. Rent a vehicle");
             System.out.println("3. Return a vehicle");
@@ -84,7 +84,7 @@ public class ConsoleUI{
 
     /** Displays all vehicles that Inventory reports as available. */
     private void showAvailableVehicles(){
-        ArrayList<Vehicle> vehicles = inventory.getAvailableVehicles();
+        ArrayList<Vehicle> vehicles = manager.availableVehicles();
         if(vehicles.isEmpty()){
             System.out.println("There are no available vehicles.");
             return;
@@ -108,12 +108,12 @@ public class ConsoleUI{
         String identifier = readLine("Enter the vehicle ID: ");
         if(identifier == null){ return; }
 
-        Vehicle vehicle = inventory.findVehicle(identifier.trim());
+        Vehicle vehicle = manager.find(identifier.trim());
         if(vehicle == null){
             System.out.println("That vehicle ID was not found.");
             return;
         }
-        if(!inventory.isAvailable(identifier.trim())){
+        if(!manager.isAvailable(identifier.trim())){
             System.out.println("That vehicle is already rented.");
             return;
         }
@@ -127,7 +127,7 @@ public class ConsoleUI{
 
         Renter renter = new Renter(firstName.trim(), lastName.trim());
         // Inventory performs the final availability and duration checks as well.
-        Rental rental = inventory.rentVehicle(vehicle, renter, duration);
+        Booking rental = manager.rentVehicle(vehicle, renter, duration);
         if(rental == null){
             System.out.println("The rental could not be created.");
         } else {
@@ -141,7 +141,7 @@ public class ConsoleUI{
         String identifier = readLine("Enter the vehicle ID to return: ");
         if(identifier == null){ return; }
 
-        Rental rental = inventory.returnVehicle(identifier.trim());
+        Booking rental = manager.returnVehicle(identifier.trim());
         if(rental == null){
             System.out.println("No active rental was found for that vehicle ID.");
         } else {
@@ -151,7 +151,7 @@ public class ConsoleUI{
 
     /** Displays current rentals and their charges. */
     private void showActiveRentals(){
-        ArrayList<Rental> rentals = inventory.getActiveRentals();
+        ArrayList<Booking> rentals = manager.activeRentals();
         if(rentals.isEmpty()){
             System.out.println("There are no active rentals.");
             return;
@@ -159,7 +159,7 @@ public class ConsoleUI{
 
         System.out.println("Active rentals:");
         // Rental calculates each total through its vehicle's pricing method.
-        for(Rental rental : rentals){
+        for(Booking rental : rentals){
             Vehicle vehicle = rental.getVehicle();
             System.out.println(vehicle.getID() + " - " + vehicle.getMaker() + " " +
                 vehicle.getModel() + ", renter: " + rental.getRenter().getName() +
@@ -222,7 +222,7 @@ public class ConsoleUI{
         Integer duration = readPositiveInteger("Enter rental duration in days: ");
         if(duration == null){ return false; }
 
-        ArrayList<Vehicle> available = inventory.getAvailableVehicles(pickupDate, duration);
+        ArrayList<Vehicle> available = manager.getAvailableVehicles(pickupDate, duration);
         if(available.isEmpty()){
             System.out.println("No vehicles are available for that entire period.");
             return true;
@@ -241,10 +241,10 @@ public class ConsoleUI{
             String identifier = readRequiredText("Enter the vehicle ID to reserve: ");
             if(identifier == null){ return false; }
 
-            Vehicle candidate = inventory.findVehicle(identifier);
+            Vehicle candidate = manager.find(identifier);
             if(candidate == null){
                 System.out.println("That vehicle ID was not found.");
-            } else if(!inventory.isAvailableForPeriod(identifier, pickupDate, duration)){
+            } else if(!manager.willBeAvailable(identifier, pickupDate, duration)){
                 System.out.println("That vehicle is not available for the entire requested period.");
             } else {
                 selectedVehicle = candidate;
@@ -257,7 +257,7 @@ public class ConsoleUI{
         if(lastName == null){ return false; }
 
         Renter renter = new Renter(firstName, lastName);
-        Rental reservation = inventory.reserveVehicle(selectedVehicle.getID(), renter,
+        Booking reservation = manager.reserve(selectedVehicle.getID(), renter,
                                                        pickupDate, duration);
         if(reservation == null){
             System.out.println("The reservation could not be created because that period is no longer available.");
@@ -298,14 +298,14 @@ public class ConsoleUI{
 
     /** Displays pending reservations, if any. */
     private void showReservations(){
-        ArrayList<Rental> reservations = inventory.getReservations();
+        ArrayList<Booking> reservations = manager.reservations();
         if(reservations.isEmpty()){
             System.out.println("There are no pending reservations.");
             return;
         }
 
         System.out.println("Pending reservations:");
-        for(Rental reservation : reservations){
+        for(Booking reservation : reservations){
             Vehicle vehicle = reservation.getVehicle();
             System.out.println(reservation.getReservationID() + " - " + vehicle.getID() +
                 " " + vehicle.getMaker() + " " + vehicle.getModel() +
@@ -319,7 +319,7 @@ public class ConsoleUI{
     private boolean cancelReservationPrompt(){
         String reservationID = readRequiredText("Enter reservation ID to cancel: ");
         if(reservationID == null){ return false; }
-        if(inventory.cancelReservation(reservationID)){
+        if(manager.cancelReservation(reservationID)){
             System.out.println("Reservation " + reservationID + " cancelled.");
         } else {
             System.out.println("No pending reservation with that ID was found.");
@@ -332,7 +332,7 @@ public class ConsoleUI{
         String reservationID = readRequiredText("Enter reservation ID to activate: ");
         if(reservationID == null){ return false; }
 
-        Rental reservation = findPendingReservation(reservationID);
+        Booking reservation = findPendingReservation(reservationID);
         if(reservation == null){
             System.out.println("No pending reservation with that ID was found.");
             return true;
@@ -344,7 +344,7 @@ public class ConsoleUI{
             return true;
         }
 
-        Rental activeRental = inventory.activateReservation(reservationID);
+        Booking activeRental = manager.activate(reservationID);
         if(activeRental == null){
             System.out.println("The reservation could not be activated.");
         } else {
@@ -354,8 +354,8 @@ public class ConsoleUI{
     }
 
     /** Finds a pending reservation for displaying a useful activation message. */
-    private Rental findPendingReservation(String reservationID){
-        for(Rental reservation : inventory.getReservations()){
+    private Booking findPendingReservation(String reservationID){
+        for(Booking reservation : manager.reservations()){
             if(reservation.getReservationID().equals(reservationID.trim())){
                 return reservation;
             }
@@ -367,7 +367,7 @@ public class ConsoleUI{
     private void showVehicleHistory() {
         String identifier = readRequiredText("Enter the vehicle ID to assess: ");
         if(identifier == null){ return; }
-        Vehicle vehicle = inventory.findVehicle(identifier);
+        Vehicle vehicle = manager.find(identifier);
         if(vehicle == null){
             System.out.println("\nThat vehicle ID was not found.");
             return;
@@ -446,7 +446,7 @@ public class ConsoleUI{
         // The loop keeps the menu available after each completed operation.
         while(runMenu2){
             System.out.println("\n*** Administrator Menu ***");
-            System.out.println("Lot: "+ inventory.getLotName() +"\n");
+            System.out.println("Lot: "+ manager.getLotName() +"\n");
             System.out.println("1. Add a vehicle");
             System.out.println("2. Remove a vehicle");
             System.out.println("3. View vehicle history");
@@ -493,29 +493,29 @@ public class ConsoleUI{
 
         Vehicle vehicle = choice == 1 ? new Car(year, maker, model, vType) :
                                        new Motorcycle(year, maker, model, vType);
-        inventory.addVehicle(vehicle);
+        manager.add(vehicle);
         System.out.println("The vehicle was added as " + vehicle.getID() + " into the system.");
     }
 
     private void removeVehiclePrompt(){
         String id = readLine("Enter the ID of the vehicle to remove? ");
         if(id == null){ return; }
-        Vehicle vehicle = inventory.findVehicle(id);
+        Vehicle vehicle = manager.find(id);
         if(vehicle == null){
             System.out.println("That vehicle ID was not found.");
-        } else if(!inventory.isAvailable(id)){
+        } else if(!manager.isAvailable(id)){
             System.out.println("That vehicle cannot be removed while it has an active rental.");
         } else if(hasPendingReservation(vehicle)){
             System.out.println("That vehicle cannot be removed while it has a pending reservation.");
         } else {
-            inventory.removeVehicle(id);
+            manager.remove(id);
             System.out.println(id + " was removed from the system.");
         }
     }
 
     /** Checks whether a pending reservation depends on the vehicle. */
     private boolean hasPendingReservation(Vehicle vehicle){
-        for(Rental reservation : inventory.getReservations()){
+        for(Booking reservation : manager.reservations()){
             if(reservation.getVehicle() == vehicle){ return true; }
         }
         return false;

@@ -1,13 +1,13 @@
-package common;
+package common.features;
 
-import common.vehicles.Vehicle;
+import common.features.vehicles.Vehicle;
 
 /**
  * Represents an immediate rental or a future reservation for one vehicle.
  * The booking keeps references to the existing {@link Vehicle} and {@link Renter}
  * objects instead of copying their data.
  */
-public class Rental{
+public class Booking{
     /** The possible stages in a rental or reservation's life.
      * A reservation starts as {@link #RESERVED}, can become {@link #ACTIVE} on
      * its pickup day, and then becomes {@link #RETURNED}; an unactivated
@@ -45,7 +45,7 @@ public class Rental{
      * @param rentalDuration the number of rental days; must be positive
      * @throws IllegalArgumentException if a required value is missing or invalid
      */
-    public Rental(Vehicle rentedVehicle, Renter customer, int rentalDuration){
+    public Booking(Vehicle rentedVehicle, Renter customer, int rentalDuration){
         this(null, rentedVehicle, customer, Date.today(), rentalDuration, Status.ACTIVE);
     }
 
@@ -56,7 +56,7 @@ public class Rental{
      * @param pickup the first day of the reservation period
      * @param rentalDuration the number of occupied days
      */
-    Rental(String id, Vehicle reservedVehicle, Renter customer, Date pickup,
+    Booking(String id, Vehicle reservedVehicle, Renter customer, Date pickup,
            int rentalDuration){
         this(id, reservedVehicle, customer, pickup, rentalDuration, Status.RESERVED);
     }
@@ -67,11 +67,11 @@ public class Rental{
      * @param pickup the rental start date
      * @param rentalDuration the number of occupied days
      */
-    Rental(Vehicle rentedVehicle, Renter customer, Date pickup, int rentalDuration){
+    Booking(Vehicle rentedVehicle, Renter customer, Date pickup, int rentalDuration){
         this(null, rentedVehicle, customer, pickup, rentalDuration, Status.ACTIVE);
     }
 
-    private Rental(String id, Vehicle bookedVehicle, Renter customer, Date pickup,
+    private Booking(String id, Vehicle bookedVehicle, Renter customer, Date pickup,
                    int rentalDuration, Status startingStatus){
         // A booking needs real objects, a valid pickup date, and a positive duration.
         if(bookedVehicle == null || customer == null || pickup == null){
