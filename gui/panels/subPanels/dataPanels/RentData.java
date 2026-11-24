@@ -1,6 +1,8 @@
 package gui.panels.subPanels.dataPanels;
 
 import gui.panels.subPanels.DataPanel;
+// import javax.swing.*;
+// import java.awt.*;
 
 /** Associated with the method that books vehicles for rental  */
 public class RentData extends DataPanel{

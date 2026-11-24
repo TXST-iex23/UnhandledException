@@ -6,7 +6,7 @@ import java.util.ArrayList;
 /** Manages vehicle rentals.        */
 public class Rent{
     /** Inventory which holds the list of vehicles. (Unused but here anyway) */
-    private Inventory inventory;
+    // private Inventory inventory;
     /** Current and completed rentals created by this inventory. */
     private ArrayList<Booking> rentals;
     /** The Date object with the current date */
@@ -21,7 +21,7 @@ public class Rent{
      * @param inventory     A list of all vehicle in inventory
      * @param bookings      A list of rentals, reservations, and returns     */
     public Rent(Inventory inventory, ArrayList<Booking> rentals) {
-        this.inventory = inventory;
+        // this.inventory = inventory;
         this.rentals = rentals;
     }
 
