@@ -1,0 +1,15 @@
+package gui.panels.subPanels.dataPanels;
+
+import gui.panels.subPanels.DataPanel;
+
+/** Associated with the method that adds vehicles to the inventory  */
+public class ReserveData extends DataPanel{
+
+    /**
+     * Associated with the method that adds vehicles to the inventory
+     *
+     * @param TBD  Desription is TBD.
+     */
+    public ReserveData( ){    }
+
+}
