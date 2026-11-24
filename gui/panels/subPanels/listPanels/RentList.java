@@ -1,6 +1,6 @@
-package gui.panels.subPanels.listPanels;
+package gui.panels.subpanels.listPanels;
 
-import gui.panels.subPanels.ListPanel;
+import gui.panels.subpanels.ListPanel;
 
 /** Associated with the method that adds vehicles to the inventory  */
 public class RentList extends ListPanel{

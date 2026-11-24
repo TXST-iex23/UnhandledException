@@ -1,4 +1,4 @@
-package gui.panels.subPanels;
+package gui.panels.subpanels;
 
 /**
  * Add description here */

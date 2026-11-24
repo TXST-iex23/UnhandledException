@@ -1,8 +1,7 @@
 package gui;
 
 import common.BookingManager;
-import gui.panels.BottomPanel;
-import gui.panels.TopPanel;
+import gui.panels.Panel;
 import javax.swing.*;
 import java.awt.*;
 
@@ -46,8 +45,8 @@ public class GraphicUI{
     private void buildFrame(){
         main = new JFrame();
         main.setLayout(new BorderLayout());
-        top = new TopPanel().getTopPanel();
-        bottom = new BottomPanel().getBottomPanel();
+        top = new Panel().getTop();
+        bottom = new Panel().getBottom();
 
         top.setPreferredSize(new Dimension(WIDTH, BANNER));
 

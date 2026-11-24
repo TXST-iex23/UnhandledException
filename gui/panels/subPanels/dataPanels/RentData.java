@@ -1,6 +1,6 @@
-package gui.panels.subPanels.dataPanels;
+package gui.panels.subpanels.dataPanels;
 
-import gui.panels.subPanels.DataPanel;
+import gui.panels.subpanels.DataPanel;
 // import javax.swing.*;
 // import java.awt.*;
 
