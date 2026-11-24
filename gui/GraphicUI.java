@@ -1,6 +1,8 @@
 package gui;
 
 import common.BookingManager;
+import gui.panels.BottomPanel;
+import gui.panels.TopPanel;
 import javax.swing.*;
 import java.awt.*;
 
@@ -9,23 +11,21 @@ import java.awt.*;
  * operations are implemented
  */
 public class GraphicUI{
-    private int HEIGHT = 300;
-    private int WIDTH = HEIGHT * 2;
-    private int BANNER = 150;
+    /** CONSTANTS*/
+    private final static int HEIGHT = 300;
+    private final static int WIDTH = HEIGHT * 2;
+    private final static int BANNER = 100;
 
     /** The application inventory that this menu operates on. */
-    private BookingManager manager;
+    //private BookingManager manager;
     private JFrame main;
     private JPanel top;
     private JPanel bottom;
-    private JButton placeholder1 = new JButton("Button1");
-    private JButton placeholder2 = new JButton("Button2");
-
 
     /**
      * Initiates the graphical window of the application    */
     public GraphicUI( ){
-        this.manager = new BookingManager();
+        //this.manager = new BookingManager();
         buildFrame();
     }
 
@@ -35,7 +35,7 @@ public class GraphicUI{
      * @param manager  the entry point to the backend of the application
      */
     public GraphicUI(BookingManager manager){
-        this.manager = manager;
+        //this.manager = manager;
         buildFrame();
     }
 
@@ -46,12 +46,8 @@ public class GraphicUI{
     private void buildFrame(){
         main = new JFrame();
         main.setLayout(new BorderLayout());
-
-        top = new JPanel();
-        bottom = new JPanel();
-
-        top.add(placeholder1);
-        bottom.add(placeholder2);
+        top = new TopPanel().getTopPanel();
+        bottom = new BottomPanel().getBottomPanel();
 
         top.setPreferredSize(new Dimension(WIDTH, BANNER));
 
