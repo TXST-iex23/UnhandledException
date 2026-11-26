@@ -1,28 +1,53 @@
 package gui.panels.subpanels;
-import gui.panels.Panel;
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * Add description here */
-public abstract class DataPanel extends Panel{
+public class DataPanel extends JPanel{
+	protected JPanel dataPanel;
+	// Panel Components
+	protected JPanel topLevelPanel;
+	protected JPanel midLevelPanel;
+	protected JPanel bottomLevelPanel;
 
-    Panel selected;
-
+	// CONSTRUCTORS  ===========================================================================
     /**
      * builds a list deplay panel
      *
      * @param variable  the variable description
      */
     public DataPanel( ){
-        selected = new Panel();
-    }
+		topLevelPanel = new JPanel();
+		midLevelPanel = new JPanel();
+		bottomLevelPanel = new JPanel();
+		makePanel();
+	}
 
-    /**
-     * builds a list deplay panel
-     *
-     * @param variable  the variable description
-     */
-    public void selectPanel( Panel panel ){
-        selected = panel;
-    }
+	public DataPanel(JPanel topLevelPanel, JPanel midLevelPanel, JPanel bottomLevelPanel){
+		this.topLevelPanel = topLevelPanel;
+		this.midLevelPanel = midLevelPanel;
+		this.bottomLevelPanel = bottomLevelPanel;
+		dataPanel = makePanel();	
+	}	
 
+	// METHODS  ================================================================================
+	public JPanel getPanel(){ return dataPanel; }
+
+	public void makePanel(JPanel topLevelPanel, JPanel midLevelPanel, JPanel bottomLevelPanel){
+		this.topLevelPanel = topLevelPanel;
+		this.midLevelPanel = midLevelPanel;
+		this.bottomLevelPanel = bottomLevelPanel;
+		dataPanel = makePanel();
+		dataPanel.setVisible(true);	
+	}	
+
+	private JPanel makePanel(){
+		dataPanel = new JPanel();
+		dataPanel.add(topLevelPanel);
+		dataPanel.add(midLevelPanel);
+		dataPanel.add(bottomLevelPanel);
+		dataPanel.setVisible(true);
+		return dataPanel;
+	}
 }

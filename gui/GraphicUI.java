@@ -2,6 +2,9 @@ package gui;
 
 import common.BookingManager;
 import gui.panels.Panel;
+import gui.panels.subpanels.DataPanel;
+import gui.panels.subpanels.dataPanels.InventoryData;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -17,6 +20,7 @@ public class GraphicUI{
 
     /** The application inventory that this menu operates on. */
     //private BookingManager manager;
+    private Panel panel;
     private JFrame main;
     private JPanel top;
     private JPanel bottom;
@@ -45,8 +49,9 @@ public class GraphicUI{
     private void buildFrame(){
         main = new JFrame();
         main.setLayout(new BorderLayout());
-        top = new Panel().getTop();
-        bottom = new Panel().getBottom();
+        panel = new Panel(new InventoryData().getPanel(), new InventoryData().getPanel());
+        top = panel.getTopPanel();
+        bottom = panel.getBottomPanel();
 
         top.setPreferredSize(new Dimension(WIDTH, BANNER));
 

@@ -2,10 +2,16 @@ package gui.panels.subpanels.dataPanels;
 
 import gui.panels.subpanels.DataPanel;
 import javax.swing.*;
-import java.awt.*;
+// import java.awt.*;
 
 /** Associated with the method that adds vehicles to the inventory  */
-public class InventoryData extends DataPanel{
+public class InventoryData extends DataPanel{	
+	private String[] combo = {"Car","Motorcycle"};
+	private JButton addButton;
+	private JTextField yearField;
+	private JTextField makerField;
+	private JTextField modelField;
+	private JComboBox<String> typeField = new JComboBox<>(combo);
 
     /**
      * Associated with the method that adds vehicles to the inventory
@@ -13,21 +19,34 @@ public class InventoryData extends DataPanel{
      * @param TBD  Desription is TBD.
      */
     public InventoryData( ){
-		JPanel mainPanel = new JPanel();
-		JPanel vehiclePanel = new JPanel();
-		String combo[] = {"Car","Motorcycle"};
-		
-		JButton addButton = new JButton("ADD");
-		JTextField yearField = new JTextField("Year");
-		JTextField makerField = new JTextField("Year");
-		JTextField modelField = new JTextField("Year");
-		JComboBox typeField = new JComboBox(combo);
+		addButton = new JButton("ADD");
+		yearField = new JTextField("Year");
+		makerField = new JTextField("Make");
+		modelField = new JTextField("Model");
 
-		vehiclePanel.add(yearField);
-		vehiclePanel.add(makerField);
-		vehiclePanel.add(modelField);
-		vehiclePanel.add(typeField);
-		mainPanel.add(vehiclePanel);
+		topLevelPanel = makeTopPanel(topLevelPanel);
+		bottomLevelPanel.add(addButton);
+		makePanel(topLevelPanel, midLevelPanel, bottomLevelPanel);
 	}
+
+	// METHODS  ================================================================================
+	private JPanel makeTopPanel(JPanel topLevelPanel){
+		topLevelPanel.add(yearField);
+		topLevelPanel.add(makerField);
+		topLevelPanel.add(modelField);
+		topLevelPanel.add(typeField);
+		return topLevelPanel;
+	}
+
+	private JPanel makePanel(){
+		dataPanel = new JPanel();
+		dataPanel.add(topLevelPanel);
+		dataPanel.add(midLevelPanel);
+		dataPanel.add(bottomLevelPanel);
+		dataPanel.setVisible(true);
+		return dataPanel;
+		
+	}
+	
 
 }
