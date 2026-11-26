@@ -1,4 +1,4 @@
-package gui.panels.subpanels.dataPanels;
+package gui.panels.subpanels.micropanels;
 
 import gui.panels.subpanels.DataPanel;
 // import javax.swing.*;

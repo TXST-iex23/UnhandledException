@@ -1,10 +1,8 @@
 package gui;
 
+import gui.panels.subpanels.micropanels.*;
 import common.BookingManager;
 import gui.panels.Panel;
-import gui.panels.subpanels.DataPanel;
-import gui.panels.subpanels.dataPanels.InventoryData;
-
 import javax.swing.*;
 import java.awt.*;
 
@@ -25,10 +23,9 @@ public class GraphicUI{
     private JPanel top;
     private JPanel bottom;
 
-    /**
-     * Initiates the graphical window of the application    */
+// CONSTRUCTORS ==========================================================
+    /** Initiates the graphical window of the application    */
     public GraphicUI( ){
-        //this.manager = new BookingManager();
         buildFrame();
     }
 
@@ -38,22 +35,22 @@ public class GraphicUI{
      * @param manager  the entry point to the backend of the application
      */
     public GraphicUI(BookingManager manager){
-        //this.manager = manager;
         buildFrame();
     }
 
-
-
-//-----------------------------------------------------------------
+// METHODS ===============================================================
 
     private void buildFrame(){
         main = new JFrame();
         main.setLayout(new BorderLayout());
-        panel = new Panel(new InventoryData().getPanel(), new InventoryData().getPanel());
-        top = panel.getTopPanel();
-        bottom = panel.getBottomPanel();
 
+        JPanel leftSide = new InventoryList().getPanel();
+        JPanel rightSide = new InventoryData().getPanel();
+        panel = new Panel(leftSide, rightSide);
+
+        top = panel.getTopPanel();
         top.setPreferredSize(new Dimension(WIDTH, BANNER));
+        bottom = panel.getBottomPanel();
 
         main.add(top, BorderLayout.NORTH);
         main.add(bottom, BorderLayout.CENTER);

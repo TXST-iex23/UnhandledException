@@ -1,16 +1,17 @@
-package gui.panels.subpanels.listPanels;
+package gui.panels.subpanels.micropanels;
 
-import gui.panels.subpanels.ListPanel;
+import gui.panels.subpanels.DataPanel;
+// import javax.swing.*;
+// import java.awt.*;
 
 /** Associated with the method that adds vehicles to the inventory  */
-public class ReserveList extends ListPanel{
-    // Variables needed to create renters.
+public class ReserveData extends DataPanel{
 
     /**
      * Associated with the method that adds vehicles to the inventory
      *
      * @param TBD  Desription is TBD.
      */
-    public ReserveList( ){   }
+    public ReserveData( ){    }
 
 }
